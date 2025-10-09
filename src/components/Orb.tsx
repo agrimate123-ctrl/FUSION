@@ -3,9 +3,10 @@ import { motion } from 'framer-motion';
 interface OrbProps {
   isActive?: boolean;
   color?: string;
+  image?: string;
 }
 
-export default function Orb({ isActive = false, color = 'blue' }: OrbProps) {
+export default function Orb({ isActive = false, color = 'blue', image }: OrbProps) {
   const colorMap = {
     blue: {
       gradient: 'from-blue-400 via-cyan-500 to-blue-600',
@@ -104,8 +105,19 @@ export default function Orb({ isActive = false, color = 'blue' }: OrbProps) {
               repeat: Infinity,
               ease: "easeInOut"
             }}
-            className="absolute inset-8 rounded-full bg-white/20 backdrop-blur-sm"
-          />
+            className="absolute inset-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center overflow-hidden"
+          >
+            {image && (
+              <motion.img
+                src={image}
+                alt="Orb content"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className="w-full h-full object-cover rounded-full"
+              />
+            )}
+          </motion.div>
 
           {isActive && (
             <>

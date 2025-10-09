@@ -140,7 +140,7 @@ export default function Health({ onBack }: HealthProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="purple" />
+          <Orb isActive={isAnalyzing} color="purple" image="/health-orb.png" />
         </motion.div>
 
         {isAnalyzing && (

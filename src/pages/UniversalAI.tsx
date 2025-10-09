@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, CloudRain, Sprout, Droplets, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
-import EnhancedAgriOrb from '../components/EnhancedAgriOrb';
+import { ArrowLeft, ChevronDown, Brain, Zap, Network, Cpu, Sparkles, Layers } from 'lucide-react';
+import Orb from '../components/Orb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
-interface AgricultureProps {
+interface UniversalAIProps {
   onBack: () => void;
 }
 
@@ -17,50 +17,50 @@ interface Section {
   expanded: boolean;
 }
 
-export default function Agriculture({ onBack }: AgricultureProps) {
+export default function UniversalAI({ onBack }: UniversalAIProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [sections, setSections] = useState<Section[]>([
     {
-      id: 'weather',
-      title: 'Weather & Climate',
-      icon: CloudRain,
-      content: 'Current conditions optimal for growth. Expected rainfall in 48 hours may benefit soil moisture levels.',
+      id: 'reasoning',
+      title: 'Advanced Reasoning',
+      icon: Brain,
+      content: 'Multi-step logical reasoning capabilities enhanced. Complex problem-solving accuracy improved by 34%. Causal inference models performing exceptionally.',
       expanded: false,
     },
     {
-      id: 'crop',
-      title: 'Crop Growth & Yield',
-      icon: Sprout,
-      content: 'Crop development is progressing at expected rate. Projected yield: 15% above seasonal average based on current conditions.',
+      id: 'multimodal',
+      title: 'Multimodal Processing',
+      icon: Layers,
+      content: 'Text, image, audio, and video processing unified. Cross-modal understanding achieved 96% accuracy. Semantic alignment across modalities optimized.',
       expanded: false,
     },
     {
-      id: 'water',
-      title: 'Water & Irrigation',
-      icon: Droplets,
-      content: 'Soil moisture at 65%. Irrigation recommended in 3 days if no rainfall occurs. Optimize water usage by scheduling morning irrigation.',
+      id: 'learning',
+      title: 'Adaptive Learning',
+      icon: Zap,
+      content: 'Continuous learning from user interactions. Knowledge base updated in real-time. Few-shot learning capabilities expanded to new domains.',
       expanded: false,
     },
     {
-      id: 'soil',
-      title: 'Soil Health',
-      icon: TrendingUp,
-      content: 'Nitrogen levels adequate. pH balance optimal at 6.5. Consider adding organic matter to enhance microbial activity.',
+      id: 'networking',
+      title: 'Neural Networks',
+      icon: Network,
+      content: 'Transformer architecture optimized for efficiency. Attention mechanisms refined for better context understanding. Model compression achieving 60% size reduction.',
       expanded: false,
     },
     {
-      id: 'disease',
-      title: 'Disease Management',
-      icon: AlertTriangle,
-      content: 'Low risk detected. Monitor for early blight symptoms. Preventive fungicide application recommended in humid conditions.',
+      id: 'compute',
+      title: 'Compute Optimization',
+      icon: Cpu,
+      content: 'Inference speed improved 45% through hardware acceleration. Memory usage optimized for edge deployment. Distributed computing scaling effectively.',
       expanded: false,
     },
     {
-      id: 'market',
-      title: 'Market & Economics',
-      icon: DollarSign,
-      content: 'Current market prices trending upward. Optimal harvest window in 14-21 days for maximum profit potential.',
+      id: 'creativity',
+      title: 'Creative Intelligence',
+      icon: Sparkles,
+      content: 'Generative capabilities expanded across domains. Novel solution generation showing breakthrough results. Creative reasoning patterns emerging from training.',
       expanded: false,
     },
   ]);
@@ -71,15 +71,15 @@ export default function Agriculture({ onBack }: AgricultureProps) {
   });
   const [currentStep, setCurrentStep] = useState(0);
   const [analysisSteps] = useState([
-    "Initializing agricultural data analysis...",
-    "Identifying primary factors affecting crop yield...",
-    "Analyzing soil composition and pH levels...",
-    "Evaluating climate and weather patterns...",
-    "Assessing irrigation and water management...",
-    "Examining pest and disease correlations...",
-    "Connecting market demand influences...",
-    "Building causal relationship network...",
-    "Finalizing comprehensive analysis model..."
+    "Initializing universal AI analysis...",
+    "Analyzing cross-domain patterns...",
+    "Evaluating multi-modal data inputs...",
+    "Processing neural network connections...",
+    "Assessing knowledge graph correlations...",
+    "Integrating machine learning models...",
+    "Building comprehensive AI framework...",
+    "Optimizing universal intelligence pathways...",
+    "Finalizing omniscient reasoning system..."
   ]);
 
   const toggleSection = (id: string) => {
@@ -90,40 +90,37 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
   const handleSubmit = async (_data: any) => {
     setIsAnalyzing(true);
-    setShowResults(true); // Show graph container immediately
+    setShowResults(true);
     setCurrentStep(0);
 
     const allNodes = [
-      { id: 'weather', label: 'Weather', group: 0 },
-      { id: 'soil', label: 'Soil Quality', group: 1 },
-      { id: 'water', label: 'Water', group: 2 },
-      { id: 'crop', label: 'Crop Health', group: 3 },
-      { id: 'yield', label: 'Yield', group: 4 },
-      { id: 'disease', label: 'Disease Risk', group: 5 },
-      { id: 'market', label: 'Market Price', group: 6 },
-      { id: 'nutrients', label: 'Nutrients', group: 7 },
-      { id: 'pests', label: 'Pest Control', group: 8 },
+      { id: 'input', label: 'Input Data', group: 0 },
+      { id: 'processing', label: 'AI Processing', group: 1 },
+      { id: 'reasoning', label: 'Reasoning', group: 2 },
+      { id: 'knowledge', label: 'Knowledge Base', group: 3 },
+      { id: 'generation', label: 'Generation', group: 4 },
+      { id: 'output', label: 'Intelligent Output', group: 5 },
+      { id: 'learning', label: 'Machine Learning', group: 6 },
+      { id: 'neural', label: 'Neural Networks', group: 7 },
+      { id: 'optimization', label: 'AI Optimization', group: 8 },
     ];
 
     const allLinks = [
-      { source: 'weather', target: 'soil', value: 3 },
-      { source: 'weather', target: 'water', value: 2 },
-      { source: 'soil', target: 'crop', value: 4 },
-      { source: 'water', target: 'crop', value: 4 },
-      { source: 'crop', target: 'yield', value: 5 },
-      { source: 'weather', target: 'disease', value: 2 },
-      { source: 'disease', target: 'crop', value: 3 },
-      { source: 'nutrients', target: 'soil', value: 4 },
-      { source: 'nutrients', target: 'crop', value: 3 },
-      { source: 'pests', target: 'crop', value: 2 },
-      { source: 'yield', target: 'market', value: 4 },
-      { source: 'weather', target: 'pests', value: 2 },
+      { source: 'input', target: 'processing', value: 5 },
+      { source: 'processing', target: 'reasoning', value: 4 },
+      { source: 'knowledge', target: 'reasoning', value: 4 },
+      { source: 'reasoning', target: 'generation', value: 5 },
+      { source: 'generation', target: 'output', value: 5 },
+      { source: 'processing', target: 'output', value: 3 },
+      { source: 'learning', target: 'processing', value: 4 },
+      { source: 'neural', target: 'learning', value: 5 },
+      { source: 'neural', target: 'reasoning', value: 4 },
+      { source: 'optimization', target: 'generation', value: 3 },
+      { source: 'knowledge', target: 'learning', value: 3 },
     ];
 
-    // Set final data immediately for progressive rendering
     setGraphData({ nodes: allNodes, links: allLinks });
 
-    // Step through analysis phases
     for (let i = 0; i < analysisSteps.length; i++) {
       setCurrentStep(i);
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -155,10 +152,10 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            Agriculture Intelligence
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+            Universal AI
           </h1>
-          <p className="text-gray-400 text-lg">Multimodal AI for precision farming</p>
+          <p className="text-gray-400 text-lg">Next-generation artificial general intelligence</p>
         </motion.div>
 
         <motion.div
@@ -167,7 +164,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <EnhancedAgriOrb isActive={isAnalyzing} image="/agriculture-orb.png" />
+          <Orb isActive={isAnalyzing} color="purple" image="/universal-ai.png" />
         </motion.div>
 
         {isAnalyzing && (
@@ -176,13 +173,13 @@ export default function Agriculture({ onBack }: AgricultureProps) {
             animate={{ opacity: 1 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center gap-3 bg-blue-500/20 border border-blue-500/50 rounded-full px-6 py-3">
+            <div className="inline-flex items-center gap-3 bg-purple-500/20 border border-purple-500/50 rounded-full px-6 py-3">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"
+                className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full"
               />
-              <span className="text-blue-400 font-semibold">Analyzing with GraphoraX Intelligence...</span>
+              <span className="text-purple-400 font-semibold">Analyzing with GraphoraX Intelligence...</span>
             </div>
           </motion.div>
         )}
@@ -229,26 +226,27 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
         {/* Analysis Sections - Shows below the side-by-side layout */}
         {showResults && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {sections.map((section, index) => (
                 <motion.div
                   key={section.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + index * 0.1 }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl overflow-hidden"
+                  className="bg-gray-800/50 backdrop-blur-sm border border-purple-500/30 rounded-xl overflow-hidden"
                 >
                   <button
                     onClick={() => toggleSection(section.id)}
                     className="w-full p-6 flex items-center justify-between hover:bg-gray-700/30 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-600 rounded-lg flex items-center justify-center">
                         <section.icon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-bold text-lg text-white">{section.title}</h3>

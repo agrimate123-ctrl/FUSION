@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Wheat, Heart, GraduationCap, DollarSign, Car, Globe, Cpu, Shield, MessageCircle, Lightbulb } from 'lucide-react';
+import EnhancedHomeOrb from '../components/EnhancedHomeOrb';
 
 interface DomainSelectionProps {
   onSelectDomain: (domain: string) => void;
@@ -11,7 +13,7 @@ const mainDomains = [
   { id: 'education', name: 'Education', icon: GraduationCap, color: 'from-yellow-400 to-orange-600' },
   { id: 'finance', name: 'Finance', icon: DollarSign, color: 'from-blue-400 to-cyan-600' },
   { id: 'transport', name: 'Transport', icon: Car, color: 'from-purple-400 to-violet-600' },
-  { id: 'universal', name: 'Universal AI', icon: Globe, color: 'from-indigo-400 to-blue-600' },
+  { id: 'universal-ai', name: 'Universal AI', icon: Globe, color: 'from-indigo-400 to-blue-600' },
 ];
 
 const techRealms = [
@@ -22,6 +24,8 @@ const techRealms = [
 ];
 
 export default function DomainSelection({ onSelectDomain }: DomainSelectionProps) {
+  const [isOrbActive, setIsOrbActive] = useState(false);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -65,12 +69,29 @@ export default function DomainSelection({ onSelectDomain }: DomainSelectionProps
         <p className="text-gray-400 text-xl">Select a domain to begin your AI journey</p>
       </motion.div>
 
+      {/* Enhanced Home Orb */}
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ delay: 0.4, duration: 1 }}
+        className="mb-16 relative z-10"
+      >
+        <EnhancedHomeOrb 
+          isActive={isOrbActive} 
+          image="/homeora.png"
+          title="FUSION AI"
+          subtitle="Multimodal Intelligence Platform"
+        />
+      </motion.div>
+
       <div className="max-w-7xl w-full relative z-10">
         <motion.div
           initial={{ y: 50, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12"
+          onMouseEnter={() => setIsOrbActive(true)}
+          onMouseLeave={() => setIsOrbActive(false)}
         >
           {mainDomains.map((domain, index) => (
             <motion.button
@@ -82,12 +103,10 @@ export default function DomainSelection({ onSelectDomain }: DomainSelectionProps
               whileTap={{ scale: 0.95 }}
               onClick={() => onSelectDomain(domain.id)}
               className="relative group"
-              disabled={!['agriculture', 'health'].includes(domain.id)}
             >
               <div className={`
                 relative overflow-hidden rounded-2xl p-8
                 bg-gradient-to-br ${domain.color}
-                ${!['agriculture', 'health'].includes(domain.id) ? 'opacity-50 cursor-not-allowed' : ''}
                 transition-all duration-300
               `}>
                 <motion.div
@@ -114,9 +133,6 @@ export default function DomainSelection({ onSelectDomain }: DomainSelectionProps
 
                 <domain.icon className="w-16 h-16 mb-4 mx-auto text-white" strokeWidth={1.5} />
                 <h3 className="text-2xl font-bold text-white mb-2">{domain.name}</h3>
-                {!['agriculture', 'health'].includes(domain.id) && (
-                  <span className="text-xs text-white/70">Coming Soon</span>
-                )}
               </div>
             </motion.button>
           ))}

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Type, Mic, Image, Video, Rss, Upload, Send } from 'lucide-react';
+import VoiceInput from './VoiceInput';
 
 type InputMode = 'text' | 'voice' | 'image' | 'video' | 'live';
 
@@ -13,6 +14,7 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
   const [activeMode, setActiveMode] = useState<InputMode>('text');
   const [textInput, setTextInput] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isListening, setIsListening] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const modes = [
@@ -27,10 +29,21 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
     if (activeMode === 'text' && textInput.trim()) {
       onSubmit({ mode: activeMode, content: textInput });
       setTextInput('');
+    } else if (activeMode === 'voice' && textInput.trim()) {
+      onSubmit({ mode: activeMode, content: textInput });
+      setTextInput('');
     } else if (['image', 'video'].includes(activeMode) && selectedFile) {
       onSubmit({ mode: activeMode, content: selectedFile });
       setSelectedFile(null);
     }
+  };
+
+  const handleVoiceTranscript = (transcript: string) => {
+    setTextInput(transcript);
+  };
+
+  const toggleListening = () => {
+    setIsListening(!isListening);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,17 +121,44 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-center py-12"
+              className="space-y-4"
             >
-              <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                className="mx-auto w-24 h-24 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center shadow-2xl shadow-red-500/50"
-              >
-                <Mic className="w-10 h-10 text-white" />
-              </motion.button>
-              <p className="mt-6 text-gray-400">Click to start recording</p>
-              <p className="text-sm text-gray-500 mt-2">Voice input coming soon</p>
+              <VoiceInput
+                isListening={isListening}
+                onTranscript={handleVoiceTranscript}
+                onToggleListening={toggleListening}
+              />
+              {textInput && (
+                <div className="space-y-4">
+                  <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-4 text-white">
+                    <p className="text-sm text-gray-400 mb-2">Transcript:</p>
+                    <p>{textInput}</p>
+                  </div>
+                  <motion.button
+                    onClick={handleSubmit}
+                    disabled={!textInput.trim() || isLoading}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                          className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                        />
+                        <span>Analyzing...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>Submit Query</span>
+                      </>
+                    )}
+                  </motion.button>
+                </div>
+              )}
             </motion.div>
           )}
 

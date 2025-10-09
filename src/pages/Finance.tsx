@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, CloudRain, Sprout, Droplets, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
-import EnhancedAgriOrb from '../components/EnhancedAgriOrb';
+import { ArrowLeft, ChevronDown, DollarSign, TrendingUp, PieChart, CreditCard, Building, BarChart3 } from 'lucide-react';
+import Orb from '../components/Orb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
-interface AgricultureProps {
+interface FinanceProps {
   onBack: () => void;
 }
 
@@ -17,50 +17,50 @@ interface Section {
   expanded: boolean;
 }
 
-export default function Agriculture({ onBack }: AgricultureProps) {
+export default function Finance({ onBack }: FinanceProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [sections, setSections] = useState<Section[]>([
     {
-      id: 'weather',
-      title: 'Weather & Climate',
-      icon: CloudRain,
-      content: 'Current conditions optimal for growth. Expected rainfall in 48 hours may benefit soil moisture levels.',
+      id: 'portfolio',
+      title: 'Portfolio Analysis',
+      icon: PieChart,
+      content: 'Diversified portfolio showing 12.4% annual growth. Risk-adjusted returns above benchmark. Recommend rebalancing with 5% shift to emerging markets.',
       expanded: false,
     },
     {
-      id: 'crop',
-      title: 'Crop Growth & Yield',
-      icon: Sprout,
-      content: 'Crop development is progressing at expected rate. Projected yield: 15% above seasonal average based on current conditions.',
+      id: 'spending',
+      title: 'Spending Patterns',
+      icon: CreditCard,
+      content: 'Monthly expenses within budget parameters. Discretionary spending increased 8% this quarter. Identify opportunities for optimization in subscription services.',
       expanded: false,
     },
     {
-      id: 'water',
-      title: 'Water & Irrigation',
-      icon: Droplets,
-      content: 'Soil moisture at 65%. Irrigation recommended in 3 days if no rainfall occurs. Optimize water usage by scheduling morning irrigation.',
-      expanded: false,
-    },
-    {
-      id: 'soil',
-      title: 'Soil Health',
+      id: 'investment',
+      title: 'Investment Opportunities',
       icon: TrendingUp,
-      content: 'Nitrogen levels adequate. pH balance optimal at 6.5. Consider adding organic matter to enhance microbial activity.',
+      content: 'Market conditions favorable for tech sector allocation. ESG investments showing strong performance. Consider dollar-cost averaging for volatile positions.',
       expanded: false,
     },
     {
-      id: 'disease',
-      title: 'Disease Management',
-      icon: AlertTriangle,
-      content: 'Low risk detected. Monitor for early blight symptoms. Preventive fungicide application recommended in humid conditions.',
-      expanded: false,
-    },
-    {
-      id: 'market',
-      title: 'Market & Economics',
+      id: 'budgeting',
+      title: 'Budget & Planning',
       icon: DollarSign,
-      content: 'Current market prices trending upward. Optimal harvest window in 14-21 days for maximum profit potential.',
+      content: 'Emergency fund at optimal 6-month coverage. Retirement contributions on track for target date. Short-term savings goals 78% achieved.',
+      expanded: false,
+    },
+    {
+      id: 'assets',
+      title: 'Asset Management',
+      icon: Building,
+      content: 'Real estate portfolio appreciating at 6% annually. Liquid assets properly allocated. Consider refinancing mortgage at current favorable rates.',
+      expanded: false,
+    },
+    {
+      id: 'analytics',
+      title: 'Financial Analytics',
+      icon: BarChart3,
+      content: 'Cash flow positive with improving trajectory. Debt-to-income ratio optimal at 28%. Tax optimization strategies yielding 7% savings annually.',
       expanded: false,
     },
   ]);
@@ -71,15 +71,15 @@ export default function Agriculture({ onBack }: AgricultureProps) {
   });
   const [currentStep, setCurrentStep] = useState(0);
   const [analysisSteps] = useState([
-    "Initializing agricultural data analysis...",
-    "Identifying primary factors affecting crop yield...",
-    "Analyzing soil composition and pH levels...",
-    "Evaluating climate and weather patterns...",
-    "Assessing irrigation and water management...",
-    "Examining pest and disease correlations...",
-    "Connecting market demand influences...",
-    "Building causal relationship network...",
-    "Finalizing comprehensive analysis model..."
+    "Initializing financial data analysis...",
+    "Analyzing market trends and volatility...",
+    "Evaluating risk assessment factors...",
+    "Examining portfolio diversification...",
+    "Assessing liquidity and cash flow...",
+    "Correlating economic indicators...",
+    "Building investment strategy model...",
+    "Optimizing risk-return ratios...",
+    "Finalizing comprehensive financial plan..."
   ]);
 
   const toggleSection = (id: string) => {
@@ -90,40 +90,36 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
   const handleSubmit = async (_data: any) => {
     setIsAnalyzing(true);
-    setShowResults(true); // Show graph container immediately
+    setShowResults(true);
     setCurrentStep(0);
 
     const allNodes = [
-      { id: 'weather', label: 'Weather', group: 0 },
-      { id: 'soil', label: 'Soil Quality', group: 1 },
-      { id: 'water', label: 'Water', group: 2 },
-      { id: 'crop', label: 'Crop Health', group: 3 },
-      { id: 'yield', label: 'Yield', group: 4 },
-      { id: 'disease', label: 'Disease Risk', group: 5 },
-      { id: 'market', label: 'Market Price', group: 6 },
-      { id: 'nutrients', label: 'Nutrients', group: 7 },
-      { id: 'pests', label: 'Pest Control', group: 8 },
+      { id: 'income', label: 'Income', group: 0 },
+      { id: 'expenses', label: 'Expenses', group: 1 },
+      { id: 'investments', label: 'Investments', group: 2 },
+      { id: 'savings', label: 'Savings', group: 3 },
+      { id: 'portfolio', label: 'Portfolio', group: 4 },
+      { id: 'wealth', label: 'Net Worth', group: 5 },
+      { id: 'risk', label: 'Risk Profile', group: 6 },
+      { id: 'market', label: 'Market Trends', group: 7 },
+      { id: 'goals', label: 'Financial Goals', group: 8 },
     ];
 
     const allLinks = [
-      { source: 'weather', target: 'soil', value: 3 },
-      { source: 'weather', target: 'water', value: 2 },
-      { source: 'soil', target: 'crop', value: 4 },
-      { source: 'water', target: 'crop', value: 4 },
-      { source: 'crop', target: 'yield', value: 5 },
-      { source: 'weather', target: 'disease', value: 2 },
-      { source: 'disease', target: 'crop', value: 3 },
-      { source: 'nutrients', target: 'soil', value: 4 },
-      { source: 'nutrients', target: 'crop', value: 3 },
-      { source: 'pests', target: 'crop', value: 2 },
-      { source: 'yield', target: 'market', value: 4 },
-      { source: 'weather', target: 'pests', value: 2 },
+      { source: 'income', target: 'expenses', value: 3 },
+      { source: 'income', target: 'savings', value: 4 },
+      { source: 'savings', target: 'investments', value: 5 },
+      { source: 'investments', target: 'portfolio', value: 4 },
+      { source: 'portfolio', target: 'wealth', value: 5 },
+      { source: 'income', target: 'wealth', value: 3 },
+      { source: 'risk', target: 'investments', value: 4 },
+      { source: 'market', target: 'portfolio', value: 3 },
+      { source: 'goals', target: 'savings', value: 4 },
+      { source: 'goals', target: 'wealth', value: 5 },
     ];
 
-    // Set final data immediately for progressive rendering
     setGraphData({ nodes: allNodes, links: allLinks });
 
-    // Step through analysis phases
     for (let i = 0; i < analysisSteps.length; i++) {
       setCurrentStep(i);
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -155,10 +151,17 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            Agriculture Intelligence
-          </h1>
-          <p className="text-gray-400 text-lg">Multimodal AI for precision farming</p>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <img 
+              src="/finance.jpg" 
+              alt="Finance" 
+              className="w-16 h-16 object-cover rounded-full"
+            />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-yellow-400 to-orange-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+              Finance Intelligence
+            </h1>
+          </div>
+          <p className="text-gray-400 text-lg">AI-driven financial planning and analysis</p>
         </motion.div>
 
         <motion.div
@@ -167,7 +170,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <EnhancedAgriOrb isActive={isAnalyzing} image="/agriculture-orb.png" />
+          <Orb isActive={isAnalyzing} color="yellow" image="/finance-orb.png" />
         </motion.div>
 
         {isAnalyzing && (
@@ -176,13 +179,13 @@ export default function Agriculture({ onBack }: AgricultureProps) {
             animate={{ opacity: 1 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center gap-3 bg-blue-500/20 border border-blue-500/50 rounded-full px-6 py-3">
+            <div className="inline-flex items-center gap-3 bg-yellow-500/20 border border-yellow-500/50 rounded-full px-6 py-3">
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full"
+                className="w-5 h-5 border-2 border-yellow-400 border-t-transparent rounded-full"
               />
-              <span className="text-blue-400 font-semibold">Analyzing with GraphoraX Intelligence...</span>
+              <span className="text-yellow-400 font-semibold">Analyzing with GraphoraX Intelligence...</span>
             </div>
           </motion.div>
         )}
@@ -229,26 +232,27 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
         {/* Analysis Sections - Shows below the side-by-side layout */}
         {showResults && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {sections.map((section, index) => (
                 <motion.div
                   key={section.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + index * 0.1 }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl overflow-hidden"
+                  className="bg-gray-800/50 backdrop-blur-sm border border-yellow-500/30 rounded-xl overflow-hidden"
                 >
                   <button
                     onClick={() => toggleSection(section.id)}
                     className="w-full p-6 flex items-center justify-between hover:bg-gray-700/30 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-lg flex items-center justify-center">
                         <section.icon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-bold text-lg text-white">{section.title}</h3>

@@ -4,8 +4,12 @@ import SplashScreen from './pages/SplashScreen';
 import DomainSelection from './pages/DomainSelection';
 import Agriculture from './pages/Agriculture';
 import Health from './pages/Health';
+import Education from './pages/Education';
+import Finance from './pages/Finance';
+import Transport from './pages/Transport';
+import UniversalAI from './pages/UniversalAI';
 
-type Page = 'splash' | 'domains' | 'agriculture' | 'health';
+type Page = 'splash' | 'domains' | 'agriculture' | 'health' | 'education' | 'finance' | 'transport' | 'universal-ai';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<Page>('splash');
@@ -33,6 +37,18 @@ function App() {
         )}
         {currentPage === 'health' && (
           <Health key="health" onBack={() => setCurrentPage('domains')} />
+        )}
+        {currentPage === 'education' && (
+          <Education key="education" onBack={() => setCurrentPage('domains')} />
+        )}
+        {currentPage === 'finance' && (
+          <Finance key="finance" onBack={() => setCurrentPage('domains')} />
+        )}
+        {currentPage === 'transport' && (
+          <Transport key="transport" onBack={() => setCurrentPage('domains')} />
+        )}
+        {currentPage === 'universal-ai' && (
+          <UniversalAI key="universal-ai" onBack={() => setCurrentPage('domains')} />
         )}
       </AnimatePresence>
     </div>

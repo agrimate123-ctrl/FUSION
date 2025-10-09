@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ChevronDown, CloudRain, Sprout, Droplets, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
-import EnhancedAgriOrb from '../components/EnhancedAgriOrb';
+import { ArrowLeft, ChevronDown, BookOpen, Users, GraduationCap, Target, TrendingUp, Award } from 'lucide-react';
+import Orb from '../components/Orb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
-interface AgricultureProps {
+interface EducationProps {
   onBack: () => void;
 }
 
@@ -17,50 +17,50 @@ interface Section {
   expanded: boolean;
 }
 
-export default function Agriculture({ onBack }: AgricultureProps) {
+export default function Education({ onBack }: EducationProps) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [sections, setSections] = useState<Section[]>([
     {
-      id: 'weather',
-      title: 'Weather & Climate',
-      icon: CloudRain,
-      content: 'Current conditions optimal for growth. Expected rainfall in 48 hours may benefit soil moisture levels.',
+      id: 'learning',
+      title: 'Learning Paths & Curriculum',
+      icon: BookOpen,
+      content: 'Personalized learning paths adapted to individual pace. Mathematics proficiency shows 23% improvement. Recommend advanced problem-solving modules.',
       expanded: false,
     },
     {
-      id: 'crop',
-      title: 'Crop Growth & Yield',
-      icon: Sprout,
-      content: 'Crop development is progressing at expected rate. Projected yield: 15% above seasonal average based on current conditions.',
+      id: 'engagement',
+      title: 'Student Engagement',
+      icon: Users,
+      content: 'Participation levels excellent in interactive sessions. Group collaboration skills developing well. Consider peer-to-peer learning opportunities.',
       expanded: false,
     },
     {
-      id: 'water',
-      title: 'Water & Irrigation',
-      icon: Droplets,
-      content: 'Soil moisture at 65%. Irrigation recommended in 3 days if no rainfall occurs. Optimize water usage by scheduling morning irrigation.',
+      id: 'performance',
+      title: 'Academic Performance',
+      icon: GraduationCap,
+      content: 'Overall GPA trending upward at 3.7. Strongest performance in STEM subjects. Language arts show steady improvement with targeted support.',
       expanded: false,
     },
     {
-      id: 'soil',
-      title: 'Soil Health',
+      id: 'goals',
+      title: 'Learning Objectives',
+      icon: Target,
+      content: 'Short-term goals 85% achieved. Long-term career pathway alignment strong. Recommend exploring advanced placement courses in areas of interest.',
+      expanded: false,
+    },
+    {
+      id: 'progress',
+      title: 'Progress Analytics',
       icon: TrendingUp,
-      content: 'Nitrogen levels adequate. pH balance optimal at 6.5. Consider adding organic matter to enhance microbial activity.',
+      content: 'Learning velocity increased by 18% this semester. Knowledge retention rates above average. Time-on-task optimization showing positive results.',
       expanded: false,
     },
     {
-      id: 'disease',
-      title: 'Disease Management',
-      icon: AlertTriangle,
-      content: 'Low risk detected. Monitor for early blight symptoms. Preventive fungicide application recommended in humid conditions.',
-      expanded: false,
-    },
-    {
-      id: 'market',
-      title: 'Market & Economics',
-      icon: DollarSign,
-      content: 'Current market prices trending upward. Optimal harvest window in 14-21 days for maximum profit potential.',
+      id: 'achievements',
+      title: 'Skills & Achievements',
+      icon: Award,
+      content: 'Critical thinking skills advanced level. Digital literacy competencies exceeded expectations. Leadership potential identified through project work.',
       expanded: false,
     },
   ]);
@@ -71,15 +71,15 @@ export default function Agriculture({ onBack }: AgricultureProps) {
   });
   const [currentStep, setCurrentStep] = useState(0);
   const [analysisSteps] = useState([
-    "Initializing agricultural data analysis...",
-    "Identifying primary factors affecting crop yield...",
-    "Analyzing soil composition and pH levels...",
-    "Evaluating climate and weather patterns...",
-    "Assessing irrigation and water management...",
-    "Examining pest and disease correlations...",
-    "Connecting market demand influences...",
-    "Building causal relationship network...",
-    "Finalizing comprehensive analysis model..."
+    "Initializing educational data analysis...",
+    "Analyzing learning patterns and preferences...",
+    "Evaluating curriculum effectiveness...",
+    "Assessing student engagement metrics...",
+    "Examining knowledge retention factors...",
+    "Correlating teaching methodologies...",
+    "Building personalized learning pathways...",
+    "Optimizing educational outcomes...",
+    "Finalizing adaptive learning model..."
   ]);
 
   const toggleSection = (id: string) => {
@@ -90,40 +90,37 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
   const handleSubmit = async (_data: any) => {
     setIsAnalyzing(true);
-    setShowResults(true); // Show graph container immediately
+    setShowResults(true);
     setCurrentStep(0);
 
     const allNodes = [
-      { id: 'weather', label: 'Weather', group: 0 },
-      { id: 'soil', label: 'Soil Quality', group: 1 },
-      { id: 'water', label: 'Water', group: 2 },
-      { id: 'crop', label: 'Crop Health', group: 3 },
-      { id: 'yield', label: 'Yield', group: 4 },
-      { id: 'disease', label: 'Disease Risk', group: 5 },
-      { id: 'market', label: 'Market Price', group: 6 },
-      { id: 'nutrients', label: 'Nutrients', group: 7 },
-      { id: 'pests', label: 'Pest Control', group: 8 },
+      { id: 'curriculum', label: 'Curriculum', group: 0 },
+      { id: 'engagement', label: 'Engagement', group: 1 },
+      { id: 'performance', label: 'Performance', group: 2 },
+      { id: 'skills', label: 'Skills', group: 3 },
+      { id: 'goals', label: 'Learning Goals', group: 4 },
+      { id: 'outcomes', label: 'Outcomes', group: 5 },
+      { id: 'methods', label: 'Teaching Methods', group: 6 },
+      { id: 'retention', label: 'Knowledge Retention', group: 7 },
+      { id: 'assessment', label: 'Assessment', group: 8 },
     ];
 
     const allLinks = [
-      { source: 'weather', target: 'soil', value: 3 },
-      { source: 'weather', target: 'water', value: 2 },
-      { source: 'soil', target: 'crop', value: 4 },
-      { source: 'water', target: 'crop', value: 4 },
-      { source: 'crop', target: 'yield', value: 5 },
-      { source: 'weather', target: 'disease', value: 2 },
-      { source: 'disease', target: 'crop', value: 3 },
-      { source: 'nutrients', target: 'soil', value: 4 },
-      { source: 'nutrients', target: 'crop', value: 3 },
-      { source: 'pests', target: 'crop', value: 2 },
-      { source: 'yield', target: 'market', value: 4 },
-      { source: 'weather', target: 'pests', value: 2 },
+      { source: 'curriculum', target: 'engagement', value: 4 },
+      { source: 'engagement', target: 'performance', value: 5 },
+      { source: 'curriculum', target: 'skills', value: 3 },
+      { source: 'performance', target: 'outcomes', value: 4 },
+      { source: 'goals', target: 'performance', value: 3 },
+      { source: 'skills', target: 'outcomes', value: 4 },
+      { source: 'methods', target: 'engagement', value: 4 },
+      { source: 'methods', target: 'retention', value: 3 },
+      { source: 'retention', target: 'performance', value: 4 },
+      { source: 'assessment', target: 'performance', value: 5 },
+      { source: 'assessment', target: 'outcomes', value: 3 },
     ];
 
-    // Set final data immediately for progressive rendering
     setGraphData({ nodes: allNodes, links: allLinks });
 
-    // Step through analysis phases
     for (let i = 0; i < analysisSteps.length; i++) {
       setCurrentStep(i);
       await new Promise(resolve => setTimeout(resolve, 800));
@@ -155,10 +152,17 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           animate={{ y: 0, opacity: 1 }}
           className="text-center mb-12"
         >
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            Agriculture Intelligence
-          </h1>
-          <p className="text-gray-400 text-lg">Multimodal AI for precision farming</p>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <img 
+              src="/edu.png" 
+              alt="Education" 
+              className="w-16 h-16 object-contain"
+            />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-400 to-indigo-600 bg-clip-text text-transparent" style={{ fontFamily: 'Orbitron, sans-serif' }}>
+              Education Intelligence
+            </h1>
+          </div>
+          <p className="text-gray-400 text-lg">AI-powered personalized learning analytics</p>
         </motion.div>
 
         <motion.div
@@ -167,7 +171,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <EnhancedAgriOrb isActive={isAnalyzing} image="/agriculture-orb.png" />
+          <Orb isActive={isAnalyzing} color="blue" image="/education-orb.png" />
         </motion.div>
 
         {isAnalyzing && (
@@ -229,12 +233,13 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
         {/* Analysis Sections - Shows below the side-by-side layout */}
         {showResults && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
               {sections.map((section, index) => (
                 <motion.div
                   key={section.id}
@@ -248,7 +253,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
                     className="w-full p-6 flex items-center justify-between hover:bg-gray-700/30 transition-colors"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-lg flex items-center justify-center">
                         <section.icon className="w-6 h-6 text-white" />
                       </div>
                       <h3 className="font-bold text-lg text-white">{section.title}</h3>
