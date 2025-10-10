@@ -4,66 +4,66 @@ import { ArrowLeft, ChevronDown, CloudRain, Sprout, Droplets, TrendingUp, AlertT
 import EnhancedAgriOrb from '../components/EnhancedAgriOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
+import WeatherClimate from './agriculture/WeatherClimate';
+import CropGrowthYield from './agriculture/CropGrowthYield';
+import WaterIrrigation from './agriculture/WaterIrrigation';
+import SoilHealth from './agriculture/SoilHealth';
+import DiseaseManagement from './agriculture/DiseaseManagement';
+import MarketEconomics from './agriculture/MarketEconomics';
+import { localAI } from '../services/localAI';
 
 interface AgricultureProps {
   onBack: () => void;
 }
 
-interface Section {
-  id: string;
-  title: string;
-  icon: any;
-  content: string;
-  expanded: boolean;
-}
+
+
+type CurrentView = 'main' | 'weather' | 'crop' | 'water' | 'soil' | 'disease' | 'market';
 
 export default function Agriculture({ onBack }: AgricultureProps) {
+  const [currentView, setCurrentView] = useState<CurrentView>('main');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
-  const [sections, setSections] = useState<Section[]>([
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [audioLevel, setAudioLevel] = useState(0);
+  const sections = [
     {
       id: 'weather',
       title: 'Weather & Climate',
       icon: CloudRain,
-      content: 'Current conditions optimal for growth. Expected rainfall in 48 hours may benefit soil moisture levels.',
-      expanded: false,
+      content: 'Real-time weather monitoring and climate analysis for optimal farming decisions.',
     },
     {
       id: 'crop',
       title: 'Crop Growth & Yield',
       icon: Sprout,
-      content: 'Crop development is progressing at expected rate. Projected yield: 15% above seasonal average based on current conditions.',
-      expanded: false,
+      content: 'Track crop development stages and predict yield with advanced AI analytics.',
     },
     {
       id: 'water',
       title: 'Water & Irrigation',
       icon: Droplets,
-      content: 'Soil moisture at 65%. Irrigation recommended in 3 days if no rainfall occurs. Optimize water usage by scheduling morning irrigation.',
-      expanded: false,
+      content: 'Smart water management and precision irrigation control systems.',
     },
     {
       id: 'soil',
       title: 'Soil Health',
       icon: TrendingUp,
-      content: 'Nitrogen levels adequate. pH balance optimal at 6.5. Consider adding organic matter to enhance microbial activity.',
-      expanded: false,
+      content: 'Comprehensive soil analysis and fertility management solutions.',
     },
     {
       id: 'disease',
       title: 'Disease Management',
       icon: AlertTriangle,
-      content: 'Low risk detected. Monitor for early blight symptoms. Preventive fungicide application recommended in humid conditions.',
-      expanded: false,
+      content: 'Advanced crop protection and integrated pest management strategies.',
     },
     {
       id: 'market',
       title: 'Market & Economics',
       icon: DollarSign,
-      content: 'Current market prices trending upward. Optimal harvest window in 14-21 days for maximum profit potential.',
-      expanded: false,
+      content: 'Financial analysis and market intelligence for agricultural operations.',
     },
-  ]);
+  ];
 
   const [graphData, setGraphData] = useState<{ nodes: any[]; links: any[] }>({
     nodes: [],
@@ -83,16 +83,76 @@ export default function Agriculture({ onBack }: AgricultureProps) {
   ]);
 
   const toggleSection = (id: string) => {
-    setSections(sections.map(s =>
-      s.id === id ? { ...s, expanded: !s.expanded } : s
-    ));
+    setCurrentView(id as CurrentView);
   };
 
-  const handleSubmit = async (_data: any) => {
+  const handleBackToMain = () => {
+    setCurrentView('main');
+  };
+
+  const handleSubmit = async (data: any) => {
     setIsAnalyzing(true);
     setShowResults(true); // Show graph container immediately
     setCurrentStep(0);
 
+    console.log('🌾 Agriculture analysis started:', data);
+
+    // Check if we have AI response from InputPanel
+    if (data.aiResponse && data.aiResponse.success) {
+      console.log('✅ Using AI-generated analysis');
+      
+      // Generate graph data from AI response
+      const aiGraphData = localAI.generateGraphData(data.aiResponse);
+      setGraphData(aiGraphData);
+      
+      // Simulate progressive loading for better UX
+      const steps = [
+        "Analyzing soil conditions...",
+        "Processing weather data...",
+        "Evaluating crop health indicators...",
+        "Assessing irrigation needs...",
+        "Calculating yield predictions...",
+        "Generating recommendations..."
+      ];
+
+      for (let i = 0; i < steps.length; i++) {
+        setCurrentStep(i);
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+
+      setIsAnalyzing(false);
+
+      // Play TTS audio if available
+      if (data.aiResponse.analysis.audio) {
+        console.log('🔊 Playing TTS audio for agriculture analysis...');
+        try {
+          await localAI.playResponseAudio(
+            data.aiResponse,
+            () => {
+              console.log('🎙️ Agriculture orb started speaking');
+              setIsSpeaking(true);
+            },
+            () => {
+              console.log('🤐 Agriculture orb finished speaking');
+              setIsSpeaking(false);
+              setAudioLevel(0);
+            },
+            (level: number) => {
+              setAudioLevel(level);
+            }
+          );
+        } catch (error) {
+          console.warn('Failed to play TTS audio:', error);
+          setIsSpeaking(false);
+          setAudioLevel(0);
+        }
+      }
+
+      return;
+    }
+
+    // Fallback to demo data if no AI response
+    console.log('⚠️ Using fallback demo data');
     const allNodes = [
       { id: 'weather', label: 'Weather', group: 0 },
       { id: 'soil', label: 'Soil Quality', group: 1 },
@@ -132,6 +192,26 @@ export default function Agriculture({ onBack }: AgricultureProps) {
     setIsAnalyzing(false);
   };
 
+  // Render dedicated pages based on current view
+  if (currentView === 'weather') {
+    return <WeatherClimate onBack={handleBackToMain} />;
+  }
+  if (currentView === 'crop') {
+    return <CropGrowthYield onBack={handleBackToMain} />;
+  }
+  if (currentView === 'water') {
+    return <WaterIrrigation onBack={handleBackToMain} />;
+  }
+  if (currentView === 'soil') {
+    return <SoilHealth onBack={handleBackToMain} />;
+  }
+  if (currentView === 'disease') {
+    return <DiseaseManagement onBack={handleBackToMain} />;
+  }
+  if (currentView === 'market') {
+    return <MarketEconomics onBack={handleBackToMain} />;
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -167,7 +247,12 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <EnhancedAgriOrb isActive={isAnalyzing} image="/agriculture-orb.png" />
+          <EnhancedAgriOrb 
+            isActive={isAnalyzing} 
+            image="/agriculture-orb.png" 
+            isSpeaking={isSpeaking}
+            audioLevel={audioLevel}
+          />
         </motion.div>
 
         {isAnalyzing && (
@@ -205,7 +290,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
                 : 'w-full'
             }`}
           >
-            <InputPanel onSubmit={handleSubmit} isLoading={isAnalyzing} />
+            <InputPanel onSubmit={handleSubmit} isLoading={isAnalyzing} domain="agriculture" />
           </motion.div>
 
           {/* Graph View - Appears on the right when results show */}
@@ -227,57 +312,50 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           )}
         </motion.div>
 
-        {/* Analysis Sections - Shows below the side-by-side layout */}
-        {showResults && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-              {sections.map((section, index) => (
-                <motion.div
-                  key={section.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1 }}
-                  className="bg-gray-800/50 backdrop-blur-sm border border-blue-500/30 rounded-xl overflow-hidden"
-                >
-                  <button
-                    onClick={() => toggleSection(section.id)}
-                    className="w-full p-6 flex items-center justify-between hover:bg-gray-700/30 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
-                        <section.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="font-bold text-lg text-white">{section.title}</h3>
-                    </div>
-                    <motion.div
-                      animate={{ rotate: section.expanded ? 180 : 0 }}
-                      transition={{ duration: 0.3 }}
+        {/* Agriculture Features - Below input box */}
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="mt-12"
+        >
+          <h2 className="text-2xl font-bold text-white mb-6 text-center">Agriculture Features</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {sections.map((section, index) => (
+              <motion.div
+                key={section.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
+                whileHover={{ scale: 1.03, y: -3 }}
+                whileTap={{ scale: 0.97 }}
+                className="bg-gray-800/50 backdrop-blur-sm border border-green-500/30 rounded-xl overflow-hidden hover:border-green-400/70 hover:shadow-lg hover:shadow-green-400/20 transition-all duration-300 cursor-pointer group"
+                onClick={() => toggleSection(section.id)}
+              >
+                <div className="p-6">
+                  <div className="flex items-center gap-4 mb-4">
+                    <motion.div 
+                      className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-300"
                     >
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
+                      <section.icon className="w-6 h-6 text-white" />
                     </motion.div>
-                  </button>
+                    <h3 className="font-bold text-lg text-white group-hover:text-green-400 transition-colors duration-300">{section.title}</h3>
+                  </div>
+                  <p className="text-gray-300 leading-relaxed mb-4 text-sm">
+                    {section.content}
+                  </p>
+                  <div className="flex items-center justify-end">
+                    <span className="text-green-400 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all duration-300">
+                      Explore
+                      <ChevronDown className="w-4 h-4 rotate-[-90deg] group-hover:translate-x-1 transition-transform duration-300" />
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
 
-                  <motion.div
-                    initial={false}
-                    animate={{
-                      height: section.expanded ? 'auto' : 0,
-                      opacity: section.expanded ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-6 pt-0 text-gray-300 leading-relaxed">
-                      {section.content}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
       </div>
     </motion.div>
   );

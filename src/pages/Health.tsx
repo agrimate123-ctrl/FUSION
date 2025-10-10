@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Activity, Heart, Pill, Brain, Trees, User } from 'lucide-react';
-import Orb from '../components/Orb';
+import EnhancedHealthOrb from '../components/EnhancedHealthOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
@@ -140,7 +140,7 @@ export default function Health({ onBack }: HealthProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="purple" image="/health-orb.png" />
+          <EnhancedHealthOrb isActive={isAnalyzing} image="/health-orb.png" />
         </motion.div>
 
         {isAnalyzing && (

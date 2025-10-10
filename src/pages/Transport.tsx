@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Car, MapPin, Clock, Fuel, Route, Shield } from 'lucide-react';
-import Orb from '../components/Orb';
+import EnhancedTransportOrb from '../components/EnhancedTransportOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
@@ -170,7 +170,7 @@ export default function Transport({ onBack }: TransportProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="cyan" image="/transport-orb.png" />
+          <EnhancedTransportOrb isActive={isAnalyzing} image="/transport-orb.png" />
         </motion.div>
 
         {isAnalyzing && (

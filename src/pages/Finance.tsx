@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, DollarSign, TrendingUp, PieChart, CreditCard, Building, BarChart3 } from 'lucide-react';
-import Orb from '../components/Orb';
+import EnhancedFinanceOrb from '../components/EnhancedFinanceOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
@@ -170,7 +170,7 @@ export default function Finance({ onBack }: FinanceProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="yellow" image="/finance-orb.png" />
+          <EnhancedFinanceOrb isActive={isAnalyzing} image="/finance-orb.png" />
         </motion.div>
 
         {isAnalyzing && (

@@ -1,20 +1,26 @@
-import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Type, Mic, Image, Video, Rss, Upload, Send } from 'lucide-react';
 import VoiceInput from './VoiceInput';
+import { localAI, AIAnalysisRequest, AIAnalysisResponse } from '../services/localAI';
+import VoiceOrb from './VoiceOrb';
 
 type InputMode = 'text' | 'voice' | 'image' | 'video' | 'live';
 
 interface InputPanelProps {
-  onSubmit: (data: { mode: InputMode; content: string | File }) => void;
+  onSubmit: (data: { mode: InputMode; content: string | File; aiResponse?: any }) => void;
   isLoading?: boolean;
+  domain?: string; // Add domain prop for AI analysis
 }
 
-export default function InputPanel({ onSubmit, isLoading = false }: InputPanelProps) {
+export default function InputPanel({ onSubmit, isLoading = false, domain = 'universal' }: InputPanelProps) {
   const [activeMode, setActiveMode] = useState<InputMode>('text');
   const [textInput, setTextInput] = useState('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isListening, setIsListening] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [lastAiResponse, setLastAiResponse] = useState<AIAnalysisResponse | null>(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const modes = [
@@ -25,16 +31,61 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
     { id: 'live' as InputMode, label: 'Live Feed', icon: Rss },
   ];
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    let content: string | File = '';
+    let aiRequest: AIAnalysisRequest | null = null;
+
+    // Prepare content and AI request based on mode
     if (activeMode === 'text' && textInput.trim()) {
-      onSubmit({ mode: activeMode, content: textInput });
-      setTextInput('');
+      content = textInput;
+      aiRequest = {
+        domain,
+        query: textInput,
+        inputType: 'text'
+      };
     } else if (activeMode === 'voice' && textInput.trim()) {
-      onSubmit({ mode: activeMode, content: textInput });
-      setTextInput('');
+      content = textInput;
+      aiRequest = {
+        domain,
+        query: textInput,
+        inputType: 'voice'
+      };
     } else if (['image', 'video'].includes(activeMode) && selectedFile) {
-      onSubmit({ mode: activeMode, content: selectedFile });
+      content = selectedFile;
+      aiRequest = {
+        domain,
+        query: `Analyze this ${activeMode} file for ${domain} insights`,
+        inputType: activeMode as 'image' | 'video',
+        file: selectedFile
+      };
+    }
+
+    if (!aiRequest) return;
+
+    // Start AI analysis with TTS enabled
+    setAiLoading(true);
+    try {
+      const aiResponse = await localAI.analyzeQuery(aiRequest, true);
+      setLastAiResponse(aiResponse);
+      
+      // Pass both original data and AI response
+      onSubmit({ 
+        mode: activeMode, 
+        content,
+        aiResponse 
+      });
+
+      // Clear inputs
+      setTextInput('');
       setSelectedFile(null);
+    } catch (error) {
+      console.error('AI analysis failed:', error);
+      // Still submit without AI response
+      onSubmit({ mode: activeMode, content });
+      setTextInput('');
+      setSelectedFile(null);
+    } finally {
+      setAiLoading(false);
     }
   };
 
@@ -93,12 +144,12 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
               />
               <motion.button
                 onClick={handleSubmit}
-                disabled={!textInput.trim() || isLoading}
+                disabled={!textInput.trim() || isLoading || aiLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading ? (
+                {isLoading || aiLoading ? (
                   <>
                     <motion.div
                       animate={{ rotate: 360 }}
@@ -114,6 +165,28 @@ export default function InputPanel({ onSubmit, isLoading = false }: InputPanelPr
                   </>
                 )}
               </motion.button>
+              
+              {/* Voice Orb - Show after AI response */}
+              <AnimatePresence>
+                {lastAiResponse && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    className="flex justify-center mt-6"
+                  >
+                    <VoiceOrb
+                      domain={domain}
+                      isActive={!!lastAiResponse}
+                      audioData={lastAiResponse.analysis.audio}
+                      audioContentType={lastAiResponse.analysis.audioContentType}
+                      voiceResponse={lastAiResponse.analysis.voice_response}
+                      onSpeakingStateChange={setIsSpeaking}
+                      className="transform hover:scale-105 transition-transform"
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 

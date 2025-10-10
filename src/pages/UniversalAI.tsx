@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, Brain, Zap, Network, Cpu, Sparkles, Layers } from 'lucide-react';
-import Orb from '../components/Orb';
+import EnhancedUniversalAIOrb from '../components/EnhancedUniversalAIOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
@@ -164,7 +164,7 @@ export default function UniversalAI({ onBack }: UniversalAIProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="purple" image="/universal-ai.png" />
+          <EnhancedUniversalAIOrb isActive={isAnalyzing} image="/universal-ai.png" />
         </motion.div>
 
         {isAnalyzing && (

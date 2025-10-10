@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, BookOpen, Users, GraduationCap, Target, TrendingUp, Award } from 'lucide-react';
-import Orb from '../components/Orb';
+import EnhancedEducationOrb from '../components/EnhancedEducationOrb';
 import InputPanel from '../components/InputPanel';
 import GraphView from '../components/GraphView';
 
@@ -171,7 +171,7 @@ export default function Education({ onBack }: EducationProps) {
           transition={{ delay: 0.2 }}
           className="mb-8"
         >
-          <Orb isActive={isAnalyzing} color="blue" image="/education-orb.png" />
+          <EnhancedEducationOrb isActive={isAnalyzing} image="/education-orb.png" />
         </motion.div>
 
         {isAnalyzing && (
