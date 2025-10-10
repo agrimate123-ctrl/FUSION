@@ -11,56 +11,139 @@ export default function SplashScreen() {
     >
       {/* Ultra Futuristic Background */}
       <div className="absolute inset-0">
-        {/* Dynamic gradient mesh */}
+        {/* Advanced Dynamic gradient mesh */}
         <motion.div
           animate={{
             background: [
-              "radial-gradient(ellipse 80% 50% at 20% 40%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(ellipse 60% 80% at 80% 70%, rgba(147, 51, 234, 0.15) 0%, transparent 50%)",
-              "radial-gradient(ellipse 60% 80% at 40% 20%, rgba(147, 51, 234, 0.15) 0%, transparent 50%), radial-gradient(ellipse 80% 50% at 90% 60%, rgba(59, 130, 246, 0.15) 0%, transparent 50%)",
-              "radial-gradient(ellipse 80% 50% at 60% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(ellipse 60% 80% at 30% 30%, rgba(147, 51, 234, 0.15) 0%, transparent 50%)"
+              "radial-gradient(ellipse 80% 50% at 20% 40%, rgba(59, 130, 246, 0.2) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 80% 70%, rgba(147, 51, 234, 0.2) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 50% 20%, rgba(6, 182, 212, 0.1) 0%, transparent 40%)",
+              "radial-gradient(ellipse 60% 80% at 40% 20%, rgba(147, 51, 234, 0.2) 0%, transparent 60%), radial-gradient(ellipse 80% 50% at 90% 60%, rgba(59, 130, 246, 0.2) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 10% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 40%)",
+              "radial-gradient(ellipse 80% 50% at 60% 80%, rgba(59, 130, 246, 0.2) 0%, transparent 60%), radial-gradient(ellipse 60% 80% at 30% 30%, rgba(147, 51, 234, 0.2) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 80% 50%, rgba(6, 182, 212, 0.1) 0%, transparent 40%)"
             ]
           }}
           transition={{
-            duration: 12,
+            duration: 8,
             repeat: Infinity,
             ease: "easeInOut"
           }}
           className="absolute inset-0"
         />
+
+        {/* Advanced morphing background overlay */}
+        <motion.div
+          animate={{
+            background: [
+              "conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(59, 130, 246, 0.03) 60deg, transparent 120deg, rgba(147, 51, 234, 0.03) 180deg, transparent 240deg, rgba(6, 182, 212, 0.03) 300deg, transparent 360deg)",
+              "conic-gradient(from 120deg at 50% 50%, transparent 0deg, rgba(147, 51, 234, 0.03) 60deg, transparent 120deg, rgba(6, 182, 212, 0.03) 180deg, transparent 240deg, rgba(59, 130, 246, 0.03) 300deg, transparent 360deg)",
+              "conic-gradient(from 240deg at 50% 50%, transparent 0deg, rgba(6, 182, 212, 0.03) 60deg, transparent 120deg, rgba(59, 130, 246, 0.03) 180deg, transparent 240deg, rgba(147, 51, 234, 0.03) 300deg, transparent 360deg)",
+            ]
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          className="absolute inset-0"
+        />
         
-        {/* Floating holographic elements */}
-        {[...Array(8)].map((_, i) => (
+        {/* Advanced floating holographic elements */}
+        {[...Array(12)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute"
             style={{
-              left: `${15 + i * 12}%`,
-              top: `${8 + i * 10}%`,
+              left: `${10 + i * 8}%`,
+              top: `${5 + i * 8}%`,
             }}
             animate={{
-              y: [0, -40, 0],
-              x: [0, 25, 0],
-              rotate: [0, 180, 360],
-              opacity: [0.05, 0.2, 0.05],
-              scale: [0.8, 1.2, 0.8],
+              y: [0, -60, 20, 0],
+              x: [0, 30, -15, 0],
+              rotate: [0, 180, 270, 360],
+              opacity: [0.02, 0.15, 0.08, 0.02],
+              scale: [0.6, 1.4, 0.9, 0.6],
+              rotateX: [0, 45, -45, 0],
+              rotateY: [0, 90, -90, 0],
             }}
             transition={{
-              duration: 10 + i * 0.5,
+              duration: 12 + i * 0.8,
               repeat: Infinity,
               ease: "easeInOut",
-              delay: i * 0.7,
+              delay: i * 0.5,
             }}
           >
-            <div
-              className="w-20 h-20 border border-blue-400/20 bg-gradient-to-br from-blue-500/10 via-purple-500/10 to-blue-600/10 backdrop-blur-sm"
+            <motion.div
+              animate={{
+                borderColor: [
+                  "rgba(59, 130, 246, 0.2)",
+                  "rgba(147, 51, 234, 0.2)",
+                  "rgba(6, 182, 212, 0.2)",
+                  "rgba(59, 130, 246, 0.2)",
+                ],
+                boxShadow: [
+                  "0 0 0px rgba(59, 130, 246, 0)",
+                  "0 0 20px rgba(147, 51, 234, 0.3)",
+                  "0 0 15px rgba(6, 182, 212, 0.2)",
+                  "0 0 0px rgba(59, 130, 246, 0)",
+                ],
+              }}
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.3,
+              }}
+              className="w-16 h-16 border-2 bg-gradient-to-br from-blue-500/5 via-purple-500/8 to-cyan-500/5 backdrop-blur-sm"
               style={{
-                clipPath: i % 3 === 0 
+                clipPath: i % 4 === 0 
                   ? 'polygon(50% 0%, 0% 100%, 100% 100%)' 
-                  : i % 3 === 1 
+                  : i % 4 === 1 
                   ? 'polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)'
-                  : 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                  : i % 4 === 2
+                  ? 'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)'
+                  : 'polygon(50% 0%, 90% 25%, 90% 75%, 50% 100%, 10% 75%, 10% 25%)',
               }}
             />
+          </motion.div>
+        ))}
+
+        {/* Floating data streams */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`stream-${i}`}
+            className="absolute"
+            style={{
+              left: `${20 + i * 15}%`,
+              top: '100%',
+            }}
+            animate={{
+              y: [0, -window.innerHeight - 100],
+              opacity: [0, 0.6, 0.8, 0.4, 0],
+              scale: [0.5, 1, 1.2, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              ease: "easeOut",
+              delay: i * 1.5,
+            }}
+          >
+            <div className="flex flex-col space-y-2">
+              {[...Array(5)].map((_, j) => (
+                <motion.div
+                  key={j}
+                  animate={{
+                    width: [2, 8, 4, 2],
+                    opacity: [0.3, 1, 0.6, 0.3],
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    repeat: Infinity,
+                    delay: j * 0.2,
+                    ease: "easeInOut",
+                  }}
+                  className="h-1 bg-gradient-to-r from-blue-400 via-purple-500 to-cyan-400 rounded-full"
+                />
+              ))}
+            </div>
           </motion.div>
         ))}
 
@@ -112,33 +195,60 @@ export default function SplashScreen() {
         }}
         className="relative mb-10"
       >
-        {/* Outer energy field */}
+        {/* Advanced multi-layered energy field */}
         <motion.div
           animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.5, 0.2],
-            rotate: [0, 180, 360],
+            scale: [1, 1.4, 1.1, 1],
+            opacity: [0.1, 0.6, 0.3, 0.1],
+            rotate: [0, 120, 240, 360],
+            filter: [
+              "blur(20px) hue-rotate(0deg)",
+              "blur(25px) hue-rotate(90deg)",
+              "blur(22px) hue-rotate(180deg)",
+              "blur(20px) hue-rotate(360deg)",
+            ],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute -inset-20 rounded-full bg-gradient-to-r from-blue-500/20 via-purple-500/25 via-cyan-500/20 to-blue-500/20"
+        />
+
+        {/* Secondary pulsing energy ring */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 0.9, 1],
+            opacity: [0.3, 0.8, 0.5, 0.3],
+            rotate: [0, -180, -360],
+            background: [
+              "radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(147, 51, 234, 0.3) 50%, rgba(6, 182, 212, 0.3) 100%)",
+              "radial-gradient(circle, rgba(147, 51, 234, 0.3) 0%, rgba(6, 182, 212, 0.3) 50%, rgba(59, 130, 246, 0.3) 100%)",
+              "radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, rgba(59, 130, 246, 0.3) 50%, rgba(147, 51, 234, 0.3) 100%)",
+            ],
           }}
           transition={{
             duration: 4,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute -inset-16 rounded-full bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-2xl"
+          className="absolute -inset-12 rounded-full blur-xl"
         />
 
-        {/* Secondary energy ring */}
+        {/* Tertiary oscillating field */}
         <motion.div
           animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.4, 0.7, 0.4],
+            scale: [0.8, 1.15, 0.95, 0.8],
+            opacity: [0.2, 0.6, 0.4, 0.2],
+            rotate: [0, 90, 180, 270, 360],
           }}
           transition={{
-            duration: 2.5,
+            duration: 3,
             repeat: Infinity,
             ease: "easeInOut",
           }}
-          className="absolute -inset-10 rounded-full bg-gradient-to-r from-blue-400/30 via-purple-400/30 to-blue-400/30 blur-xl"
+          className="absolute -inset-8 rounded-full bg-gradient-conic from-blue-400/20 via-purple-400/30 via-cyan-400/20 to-blue-400/20 blur-lg"
         />
 
         {/* Main holographic container */}
@@ -350,71 +460,165 @@ export default function SplashScreen() {
         </motion.p>
       </motion.div>
 
-      {/* Quantum Loading System */}
+      {/* Advanced Quantum Loading System */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.8, duration: 0.8 }}
+        initial={{ opacity: 0, y: 40, scale: 0.8 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ delay: 2, duration: 1, type: "spring", stiffness: 100 }}
         className="relative"
       >
-        {/* Main loading matrix */}
-        <div className="flex space-x-3 mb-6">
-          {[...Array(5)].map((_, i) => (
+        {/* Enhanced loading matrix with morphing effects */}
+        <div className="flex space-x-4 mb-8 relative">
+          {[...Array(7)].map((_, i) => (
             <motion.div
               key={i}
               animate={{
-                scale: [0.8, 1.4, 0.8],
-                opacity: [0.4, 1, 0.4],
+                scale: [0.6, 1.6, 1, 0.6],
+                opacity: [0.3, 1, 0.7, 0.3],
+                rotate: [0, 180, 360],
                 boxShadow: [
-                  '0 0 15px rgba(59, 130, 246, 0.3)',
-                  '0 0 30px rgba(147, 51, 234, 0.8)',
-                  '0 0 15px rgba(59, 130, 246, 0.3)',
+                  '0 0 10px rgba(59, 130, 246, 0.2)',
+                  '0 0 40px rgba(147, 51, 234, 1)',
+                  '0 0 25px rgba(6, 182, 212, 0.6)',
+                  '0 0 10px rgba(59, 130, 246, 0.2)',
                 ],
+                background: [
+                  "radial-gradient(circle, rgba(59, 130, 246, 1) 0%, rgba(59, 130, 246, 0.8) 100%)",
+                  "radial-gradient(circle, rgba(147, 51, 234, 1) 0%, rgba(147, 51, 234, 0.8) 100%)",
+                  "radial-gradient(circle, rgba(6, 182, 212, 1) 0%, rgba(6, 182, 212, 0.8) 100%)",
+                  "radial-gradient(circle, rgba(59, 130, 246, 1) 0%, rgba(59, 130, 246, 0.8) 100%)",
+                ],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                delay: i * 0.2,
+                ease: "easeInOut",
+              }}
+              className="w-5 h-5 rounded-full relative"
+            >
+              {/* Inner pulsing core */}
+              <motion.div
+                animate={{
+                  scale: [0.4, 0.8, 0.4],
+                  opacity: [1, 0.6, 1],
+                }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  delay: i * 0.1,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-1 bg-white rounded-full"
+              />
+            </motion.div>
+          ))}
+          
+          {/* Connecting energy lines */}
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={`line-${i}`}
+              className="absolute top-1/2 h-0.5 bg-gradient-to-r from-blue-400/0 via-purple-400/60 to-blue-400/0"
+              style={{
+                left: `${(i + 1) * 14.28}%`,
+                width: '14.28%',
+                transform: 'translateY(-50%)',
+              }}
+              animate={{
+                opacity: [0, 1, 0],
+                scaleX: [0, 1, 0],
               }}
               transition={{
                 duration: 2,
                 repeat: Infinity,
-                delay: i * 0.15,
+                delay: i * 0.3,
                 ease: "easeInOut",
               }}
-              className="w-4 h-4 rounded-full bg-gradient-to-r from-blue-400 via-purple-500 to-blue-400"
             />
           ))}
         </div>
 
-        {/* System status */}
+        {/* Advanced system status with dynamic text */}
         <motion.div
           animate={{
-            opacity: [0.6, 1, 0.6],
+            opacity: [0.7, 1, 0.7],
           }}
           transition={{
-            duration: 1.8,
+            duration: 2,
             repeat: Infinity,
             ease: "easeInOut",
           }}
           className="text-center"
         >
-          <p className="text-blue-300 text-sm tracking-[0.3em] font-light mb-2" style={{ fontFamily: 'Orbitron, sans-serif' }}>
-            INITIALIZING NEURAL NETWORKS
-          </p>
-          <div className="flex justify-center space-x-1">
-            {[...Array(20)].map((_, i) => (
+          <motion.p
+            animate={{
+              color: [
+                "rgb(147 197 253)",
+                "rgb(196 181 253)", 
+                "rgb(103 232 249)",
+                "rgb(147 197 253)",
+              ],
+            }}
+            transition={{
+              duration: 3,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="text-sm tracking-[0.4em] font-light mb-4"
+            style={{ fontFamily: 'Orbitron, sans-serif' }}
+          >
+            QUANTUM NEURAL INITIALIZATION
+          </motion.p>
+          
+          {/* Enhanced visualization bars */}
+          <div className="flex justify-center space-x-1 mb-3">
+            {[...Array(24)].map((_, i) => (
               <motion.div
                 key={i}
                 animate={{
-                  height: [2, 8, 2],
-                  opacity: [0.3, 1, 0.3],
+                  height: [3, 12, 6, 3],
+                  opacity: [0.4, 1, 0.7, 0.4],
+                  backgroundColor: [
+                    "rgb(59 130 246)",
+                    "rgb(147 51 234)",
+                    "rgb(6 182 212)",
+                    "rgb(59 130 246)",
+                  ],
                 }}
                 transition={{
-                  duration: 1,
+                  duration: 1.2,
                   repeat: Infinity,
-                  delay: i * 0.05,
+                  delay: i * 0.03,
                   ease: "easeInOut",
                 }}
-                className="w-0.5 bg-gradient-to-t from-blue-500 to-purple-400 rounded-full"
+                className="w-1 rounded-full"
               />
             ))}
           </div>
+
+          {/* Progress indicator */}
+          <motion.div
+            className="w-48 h-1 bg-gray-800 rounded-full mx-auto overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 2.5, duration: 0.5 }}
+          >
+            <motion.div
+              animate={{
+                x: ["-100%", "100%"],
+                background: [
+                  "linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.8), transparent)",
+                  "linear-gradient(90deg, transparent, rgba(147, 51, 234, 0.8), transparent)",
+                  "linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.8), transparent)",
+                ],
+              }}
+              transition={{
+                x: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                background: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+              }}
+              className="w-full h-full"
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
 

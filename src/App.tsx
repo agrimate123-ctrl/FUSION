@@ -18,7 +18,7 @@ function App() {
     if (currentPage === 'splash') {
       const timer = setTimeout(() => {
         setCurrentPage('domains');
-      }, 3000);
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [currentPage]);

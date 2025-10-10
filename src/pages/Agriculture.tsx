@@ -163,21 +163,131 @@ export default function Agriculture({ onBack }: AgricultureProps) {
       { id: 'market', label: 'Market Price', group: 6 },
       { id: 'nutrients', label: 'Nutrients', group: 7 },
       { id: 'pests', label: 'Pest Control', group: 8 },
+      // 5 Additional Agriculture-Related Nodes
+      { id: 'fertilizer', label: 'Fertilizer', group: 9 },
+      { id: 'seeds', label: 'Seed Quality', group: 10 },
+      { id: 'machinery', label: 'Farm Equipment', group: 11 },
+      { id: 'labor', label: 'Labor Cost', group: 12 },
+      { id: 'storage', label: 'Storage', group: 13 },
     ];
 
     const allLinks = [
-      { source: 'weather', target: 'soil', value: 3 },
-      { source: 'weather', target: 'water', value: 2 },
-      { source: 'soil', target: 'crop', value: 4 },
-      { source: 'water', target: 'crop', value: 4 },
+      // Weather connections to all nodes
+      { source: 'weather', target: 'soil', value: 4 },
+      { source: 'weather', target: 'water', value: 5 },
+      { source: 'weather', target: 'crop', value: 4 },
+      { source: 'weather', target: 'yield', value: 3 },
+      { source: 'weather', target: 'disease', value: 4 },
+      { source: 'weather', target: 'market', value: 2 },
+      { source: 'weather', target: 'nutrients', value: 3 },
+      { source: 'weather', target: 'pests', value: 4 },
+      { source: 'weather', target: 'fertilizer', value: 3 },
+      { source: 'weather', target: 'seeds', value: 3 },
+      { source: 'weather', target: 'machinery', value: 2 },
+      { source: 'weather', target: 'labor', value: 2 },
+      { source: 'weather', target: 'storage', value: 4 },
+
+      // Soil connections to all remaining nodes
+      { source: 'soil', target: 'water', value: 4 },
+      { source: 'soil', target: 'crop', value: 5 },
+      { source: 'soil', target: 'yield', value: 4 },
+      { source: 'soil', target: 'disease', value: 3 },
+      { source: 'soil', target: 'market', value: 2 },
+      { source: 'soil', target: 'nutrients', value: 5 },
+      { source: 'soil', target: 'pests', value: 3 },
+      { source: 'soil', target: 'fertilizer', value: 5 },
+      { source: 'soil', target: 'seeds', value: 4 },
+      { source: 'soil', target: 'machinery', value: 4 },
+      { source: 'soil', target: 'labor', value: 3 },
+      { source: 'soil', target: 'storage', value: 2 },
+
+      // Water connections to all remaining nodes
+      { source: 'water', target: 'crop', value: 5 },
+      { source: 'water', target: 'yield', value: 4 },
+      { source: 'water', target: 'disease', value: 3 },
+      { source: 'water', target: 'market', value: 2 },
+      { source: 'water', target: 'nutrients', value: 3 },
+      { source: 'water', target: 'pests', value: 2 },
+      { source: 'water', target: 'fertilizer', value: 3 },
+      { source: 'water', target: 'seeds', value: 4 },
+      { source: 'water', target: 'machinery', value: 4 },
+      { source: 'water', target: 'labor', value: 3 },
+      { source: 'water', target: 'storage', value: 3 },
+
+      // Crop connections to all remaining nodes
       { source: 'crop', target: 'yield', value: 5 },
-      { source: 'weather', target: 'disease', value: 2 },
-      { source: 'disease', target: 'crop', value: 3 },
-      { source: 'nutrients', target: 'soil', value: 4 },
-      { source: 'nutrients', target: 'crop', value: 3 },
-      { source: 'pests', target: 'crop', value: 2 },
-      { source: 'yield', target: 'market', value: 4 },
-      { source: 'weather', target: 'pests', value: 2 },
+      { source: 'crop', target: 'disease', value: 4 },
+      { source: 'crop', target: 'market', value: 4 },
+      { source: 'crop', target: 'nutrients', value: 4 },
+      { source: 'crop', target: 'pests', value: 4 },
+      { source: 'crop', target: 'fertilizer', value: 4 },
+      { source: 'crop', target: 'seeds', value: 5 },
+      { source: 'crop', target: 'machinery', value: 3 },
+      { source: 'crop', target: 'labor', value: 4 },
+      { source: 'crop', target: 'storage', value: 3 },
+
+      // Yield connections to all remaining nodes
+      { source: 'yield', target: 'disease', value: 4 },
+      { source: 'yield', target: 'market', value: 5 },
+      { source: 'yield', target: 'nutrients', value: 3 },
+      { source: 'yield', target: 'pests', value: 4 },
+      { source: 'yield', target: 'fertilizer', value: 3 },
+      { source: 'yield', target: 'seeds', value: 4 },
+      { source: 'yield', target: 'machinery', value: 4 },
+      { source: 'yield', target: 'labor', value: 4 },
+      { source: 'yield', target: 'storage', value: 5 },
+
+      // Disease connections to all remaining nodes
+      { source: 'disease', target: 'market', value: 3 },
+      { source: 'disease', target: 'nutrients', value: 3 },
+      { source: 'disease', target: 'pests', value: 4 },
+      { source: 'disease', target: 'fertilizer', value: 2 },
+      { source: 'disease', target: 'seeds', value: 4 },
+      { source: 'disease', target: 'machinery', value: 2 },
+      { source: 'disease', target: 'labor', value: 3 },
+      { source: 'disease', target: 'storage', value: 3 },
+
+      // Market connections to all remaining nodes
+      { source: 'market', target: 'nutrients', value: 2 },
+      { source: 'market', target: 'pests', value: 2 },
+      { source: 'market', target: 'fertilizer', value: 3 },
+      { source: 'market', target: 'seeds', value: 3 },
+      { source: 'market', target: 'machinery', value: 4 },
+      { source: 'market', target: 'labor', value: 4 },
+      { source: 'market', target: 'storage', value: 4 },
+
+      // Nutrients connections to all remaining nodes
+      { source: 'nutrients', target: 'pests', value: 3 },
+      { source: 'nutrients', target: 'fertilizer', value: 5 },
+      { source: 'nutrients', target: 'seeds', value: 3 },
+      { source: 'nutrients', target: 'machinery', value: 2 },
+      { source: 'nutrients', target: 'labor', value: 3 },
+      { source: 'nutrients', target: 'storage', value: 2 },
+
+      // Pests connections to all remaining nodes
+      { source: 'pests', target: 'fertilizer', value: 2 },
+      { source: 'pests', target: 'seeds', value: 3 },
+      { source: 'pests', target: 'machinery', value: 3 },
+      { source: 'pests', target: 'labor', value: 4 },
+      { source: 'pests', target: 'storage', value: 3 },
+
+      // Fertilizer connections to all remaining nodes
+      { source: 'fertilizer', target: 'seeds', value: 3 },
+      { source: 'fertilizer', target: 'machinery', value: 3 },
+      { source: 'fertilizer', target: 'labor', value: 3 },
+      { source: 'fertilizer', target: 'storage', value: 2 },
+
+      // Seeds connections to all remaining nodes
+      { source: 'seeds', target: 'machinery', value: 3 },
+      { source: 'seeds', target: 'labor', value: 4 },
+      { source: 'seeds', target: 'storage', value: 3 },
+
+      // Machinery connections to all remaining nodes
+      { source: 'machinery', target: 'labor', value: 5 },
+      { source: 'machinery', target: 'storage', value: 3 },
+
+      // Labor connections to all remaining nodes
+      { source: 'labor', target: 'storage', value: 4 },
     ];
 
     // Set final data immediately for progressive rendering
