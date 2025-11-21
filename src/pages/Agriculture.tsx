@@ -3,8 +3,8 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, ChevronDown, CloudRain, Sprout, Droplets, TrendingUp, AlertTriangle, DollarSign } from 'lucide-react';
 import EnhancedAgriOrb from '../components/EnhancedAgriOrb';
 import InputPanel from '../components/InputPanel';
-import RealTimeGraphView from '../components/RealTimeGraphView';
-import { useRealTimeGraph } from '../hooks/useRealTimeGraph';
+import CausalGraph, { GraphNode, GraphLink } from '../components/CausalGraph';
+import { buildIncrementalGraph } from '../services/causalAnalysis';
 import WeatherClimate from './agriculture/WeatherClimate';
 import CropGrowthYield from './agriculture/CropGrowthYield';
 import WaterIrrigation from './agriculture/WaterIrrigation';
@@ -25,14 +25,9 @@ export default function Agriculture({ onBack }: AgricultureProps) {
   const [showResults, setShowResults] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [audioLevel, setAudioLevel] = useState(0);
-
-  // Real-time graph management
-  const {
-    graphState,
-    startRealtimeBuilding,
-    clearGraph,
-    simulateStreamingUpdates
-  } = useRealTimeGraph();
+  const [graphNodes, setGraphNodes] = useState<GraphNode[]>([]);
+  const [graphLinks, setGraphLinks] = useState<GraphLink[]>([]);
+  const [isExtractingGraph, setIsExtractingGraph] = useState(false);
 
   const sections = [
     {
@@ -83,49 +78,64 @@ export default function Agriculture({ onBack }: AgricultureProps) {
 
   const handleSubmit = async (data: any) => {
     setIsAnalyzing(true);
-    setShowResults(true); // Show graph container immediately
+    setShowResults(true);
+    setIsExtractingGraph(true);
 
     console.log('🌾 Agriculture analysis started:', data);
-
-    // Clear existing graph
-    clearGraph();
 
     try {
       // Check if we have AI response from InputPanel
       if (data.aiResponse && data.aiResponse.success) {
-        console.log('✅ Using AI-generated analysis, building real-time graph...');
-        console.log('📋 Full AI Response:', data.aiResponse);
-        console.log('🎵 Audio present:', !!data.aiResponse.analysis?.audio);
-        console.log('🗣️ Voice response:', data.aiResponse.analysis?.voice_response);
+        console.log('✅ AI analysis received, extracting causal relationships...');
         
-        // Start real-time graph building from API response
-        await startRealtimeBuilding(
-          data.aiResponse,
-          (step: number, total: number, message: string) => {
-            console.log(`Graph building: Step ${step}/${total} - ${message}`);
-          }
+        const prompt = data.prompt || data.query || '';
+        
+        // Extract the actual text response from the AI
+        let responseText = '';
+        if (data.aiResponse.analysis?.response) {
+          responseText = data.aiResponse.analysis.response;
+        } else if (data.aiResponse.analysis?.insights) {
+          responseText = Array.isArray(data.aiResponse.analysis.insights) 
+            ? data.aiResponse.analysis.insights.join('\n') 
+            : String(data.aiResponse.analysis.insights);
+        } else if (data.aiResponse.analysis?.summary) {
+          responseText = data.aiResponse.analysis.summary;
+        } else {
+          responseText = 'No analysis text available';
+        }
+
+        console.log('📝 Response text for graph extraction:', responseText.substring(0, 200));
+
+        // Extract causal relationships using Gemini
+        const causalData = await buildIncrementalGraph(
+          graphNodes,
+          graphLinks,
+          prompt,
+          responseText,
+          'agriculture'
         );
+
+        console.log('🔗 Causal graph extracted:', causalData);
+        setGraphNodes(causalData.nodes);
+        setGraphLinks(causalData.links);
 
         // Play TTS audio if available
         if (data.aiResponse.analysis.audio) {
           console.log('🔊 Playing TTS audio for agriculture analysis...');
-          console.log('🎯 Audio data available:', !!data.aiResponse.analysis.audio);
-          console.log('🎯 Voice response text:', data.aiResponse.analysis.voice_response?.substring(0, 100));
           
           try {
             await localAI.playResponseAudio(
               data.aiResponse,
               () => {
-                console.log('🎙️ Agriculture orb started speaking - isSpeaking set to true');
+                console.log('🎙️ Agriculture orb started speaking');
                 setIsSpeaking(true);
               },
               () => {
-                console.log('🤐 Agriculture orb finished speaking - isSpeaking set to false');
+                console.log('🤐 Agriculture orb finished speaking');
                 setIsSpeaking(false);
                 setAudioLevel(0);
               },
               (level: number) => {
-                console.log('📊 Audio level:', level);
                 setAudioLevel(level);
               }
             );
@@ -134,21 +144,13 @@ export default function Agriculture({ onBack }: AgricultureProps) {
             setIsSpeaking(false);
             setAudioLevel(0);
           }
-        } else {
-          console.warn('⚠️ No audio data in AI response');
         }
-      } else {
-        console.log('🔄 No AI response, using demo real-time simulation');
-        
-        // Use simulation for demo purposes
-        await simulateStreamingUpdates((step: number, total: number, message: string) => {
-          console.log(`Demo graph building: Step ${step}/${total} - ${message}`);
-        });
       }
     } catch (error) {
-      console.error('Error during graph building:', error);
+      console.error('Error during causal graph extraction:', error);
     } finally {
       setIsAnalyzing(false);
+      setIsExtractingGraph(false);
     }
   };
 
@@ -192,7 +194,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
         </div>
         
         {/* Real-time Graph Status */}
-        {graphState.isBuilding && (
+        {isExtractingGraph && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -200,7 +202,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           >
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm text-green-200 font-medium">Building Real-Time Graph</span>
+              <span className="text-sm text-green-200 font-medium">Extracting Causal Relationships...</span>
             </div>
           </motion.div>
         )}
@@ -216,64 +218,6 @@ export default function Agriculture({ onBack }: AgricultureProps) {
               isSpeaking={isSpeaking}
               audioLevel={audioLevel}
             />
-            
-            {/* Debug Status Indicators */}
-            <div className="mt-4 flex gap-2 text-xs text-green-300/70 flex-wrap justify-center">
-              <div className={`px-2 py-1 rounded ${isAnalyzing ? 'bg-blue-500/30' : 'bg-gray-500/20'}`}>
-                Analyzing: {isAnalyzing ? '✅' : '❌'}
-              </div>
-              <div className={`px-2 py-1 rounded ${isSpeaking ? 'bg-green-500/30' : 'bg-gray-500/20'}`}>
-                Speaking: {isSpeaking ? '🎙️' : '🔇'}
-              </div>
-              <div className="px-2 py-1 rounded bg-purple-500/20">
-                Audio: {Math.round(audioLevel * 100)}%
-              </div>
-              <button 
-                onClick={() => {
-                  console.log('🧪 Testing orb - Current isSpeaking:', isSpeaking);
-                  const newSpeakingState = !isSpeaking;
-                  setIsSpeaking(newSpeakingState);
-                  setAudioLevel(newSpeakingState ? 0.8 : 0);
-                  console.log('🧪 Set isSpeaking to:', newSpeakingState, 'audioLevel:', newSpeakingState ? 0.8 : 0);
-                }}
-                className="px-2 py-1 rounded bg-yellow-500/30 hover:bg-yellow-500/50 transition-colors"
-              >
-                Test Orb 🧪
-              </button>
-              <button 
-                onClick={async () => {
-                  console.log('🎙️ Testing TTS directly...');
-                  setIsSpeaking(true);
-                  try {
-                    const result = await localAI.generateTTS('Hello, this is a test of the agriculture orb speaking system.');
-                    if (result.success && result.audio) {
-                      console.log('✅ TTS generated successfully');
-                      await localAI.playAudio(
-                        result.audio,
-                        'audio/mpeg',
-                        () => console.log('🎙️ Direct TTS started'),
-                        () => {
-                          console.log('🔇 Direct TTS ended');
-                          setIsSpeaking(false);
-                          setAudioLevel(0);
-                        },
-                        (level) => setAudioLevel(level)
-                      );
-                    } else {
-                      console.error('❌ TTS generation failed:', result);
-                      setIsSpeaking(false);
-                    }
-                  } catch (error) {
-                    console.error('❌ TTS test failed:', error);
-                    setIsSpeaking(false);
-                    setAudioLevel(0);
-                  }
-                }}
-                className="px-2 py-1 rounded bg-blue-500/30 hover:bg-blue-500/50 transition-colors"
-              >
-                Test TTS 🔊
-              </button>
-            </div>
           </div>
 
           {/* Input Panel */}
@@ -313,7 +257,7 @@ export default function Agriculture({ onBack }: AgricultureProps) {
           </div>
         </div>
 
-        {/* Right Panel - Real-Time Graph */}
+        {/* Right Panel - Causal Graph */}
         <div className="lg:w-1/2">
           {showResults && (
             <motion.div
@@ -322,16 +266,11 @@ export default function Agriculture({ onBack }: AgricultureProps) {
               transition={{ duration: 0.5 }}
               className="h-full"
             >
-              <RealTimeGraphView
-                nodes={graphState.nodes}
-                links={graphState.links}
-                isBuilding={graphState.isBuilding}
-                buildingMessage={graphState.buildingMessage}
-                currentStep={graphState.currentStep}
-                totalSteps={graphState.totalSteps}
-                onNodeClick={(node) => {
+              <CausalGraph
+                nodes={graphNodes}
+                links={graphLinks}
+                onNodeClick={(node: GraphNode) => {
                   console.log('Node clicked:', node);
-                  // You can add node interaction logic here
                 }}
               />
             </motion.div>

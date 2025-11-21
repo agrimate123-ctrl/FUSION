@@ -55,7 +55,8 @@ class LocalAIService {
   private healthCheckInterval: number = 30000; // 30 seconds
 
   constructor() {
-    this.baseUrl = 'http://localhost:3001/api';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001';
+    this.baseUrl = `${backendUrl}/api`;
     this.checkHealth();
   }
 

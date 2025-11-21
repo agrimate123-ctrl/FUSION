@@ -14,8 +14,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Initialize Google Gemini AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" }); // Use supported model
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || 'AIzaSyBIyc_Gubv_N2XDCCHQD9HN5UnzgzejXm8');
 
 // MongoDB connection
 let db;
@@ -42,7 +41,23 @@ const OLLAMA_URL = 'http://localhost:11434';
 const execAsync = promisify(exec);
 
 // Middleware
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:5173', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, etc.)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -120,7 +135,8 @@ class GraphoraXAI {
 
   async analyzeWithGemini(domain, query, inputType = 'text') {
     try {
-      if (!process.env.GEMINI_API_KEY) {
+      const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyBIyc_Gubv_N2XDCCHQD9HN5UnzgzejXm8';
+      if (!apiKey) {
         throw new Error('Gemini API key not configured');
       }
 
@@ -128,9 +144,56 @@ class GraphoraXAI {
       
       const prompt = this.buildGeminiPrompt(domain, query, inputType);
       
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      // Use direct REST API call with v1 endpoint
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: prompt
+              }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 8192,
+            }
+          })
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Gemini API error: ${response.status} - ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      
+      // Check if response has the expected structure
+      if (!data.candidates || !data.candidates[0]) {
+        console.error('❌ Missing candidates in Gemini API response:', JSON.stringify(data).substring(0, 500));
+        throw new Error('Invalid Gemini API response - no candidates');
+      }
+      
+      // Check for finish reason issues
+      const candidate = data.candidates[0];
+      if (candidate.finishReason === 'MAX_TOKENS') {
+        console.warn('⚠️  Response truncated due to MAX_TOKENS');
+      }
+      
+      if (!candidate.content || !candidate.content.parts || !candidate.content.parts[0]) {
+        console.error('❌ Missing content/parts in Gemini response:', JSON.stringify(candidate).substring(0, 500));
+        throw new Error('Invalid Gemini API response - no content parts');
+      }
+      
+      const text = candidate.content.parts[0].text;
+      console.log('📝 Gemini response (first 500 chars):', text.substring(0, 500));
       
       console.log('✅ Gemini AI analysis completed successfully');
       return this.parseAIResponse(text, domain, 'gemini');
@@ -141,46 +204,29 @@ class GraphoraXAI {
   }
 
   buildGeminiPrompt(domain, query, inputType) {
-    return `You are GraphoraX AI, a specialized ${domain} intelligence system with advanced causal reasoning capabilities.
+    return `You are GraphoraX AI analyzing: "${query}"
 
-Domain: ${domain.toUpperCase()}
-Input Type: ${inputType}
-Query: ${query}
+Create a simple, attractive causal graph with SHORT labels (1-3 words max).
 
-Analyze this using your ${domain} expertise and provide a JSON response with the following structure:
+Examples:
+- "farmer retailer" query → {"cause": "Farmer", "effect": "Retailer", "strength": 0.9}
+- "human alien" query → {"cause": "Human", "effect": "Alien", "strength": 0.8}
 
+JSON:
 {
   "domain": "${domain}",
-  "insights": [
-    "Key insight 1 with specific details",
-    "Key insight 2 with causal reasoning", 
-    "Key insight 3 with actionable information"
-  ],
-  "recommendations": [
-    "Specific action 1 with timeline",
-    "Specific action 2 with expected outcome",
-    "Specific action 3 with risk assessment"
-  ],
+  "insights": ["Key insight"],
+  "recommendations": ["Action item"],
   "causal_relationships": [
-    {"source": "factor1", "target": "outcome1", "strength": 0.8, "type": "positive"},
-    {"source": "factor2", "target": "outcome2", "strength": 0.6, "type": "negative"}
+    {"cause": "Short Label", "effect": "Short Label", "strength": 0.8, "type": "positive"}
   ],
-  "risk_factors": [
-    {"factor": "risk1", "probability": 0.3, "impact": "medium"},
-    {"factor": "risk2", "probability": 0.2, "impact": "high"}
-  ],
-  "confidence_score": 85,
-  "data_quality": "high",
-  "summary": "Brief executive summary of the analysis",
-  "voice_response": "A natural, conversational response suitable for text-to-speech that summarizes the key findings and recommendations",
-  "next_steps": [
-    "Immediate action required",
-    "Monitor specific metrics", 
-    "Schedule follow-up analysis"
-  ]
+  "risk_factors": ["Risk"],
+  "summary": "Brief summary",
+  "voice_response": "TTS response"
 }
 
-Provide detailed, domain-specific analysis with clear causal reasoning and actionable insights. The voice_response should be natural and engaging for audio playback.`;
+Generate 4-6 relationships for: "${query}"
+Use VERY SHORT, CLEAR labels (max 3 words).`;
   }
 
   async checkOllamaStatus() {
@@ -364,11 +410,31 @@ Provide detailed, domain-specific analysis with clear causal reasoning and actio
     try {
       // For Gemini API, response should already be JSON-formatted
       if (source === 'gemini') {
-        const jsonMatch = response.match(/\{[\s\S]*\}/);
+        // Extract JSON from code blocks if present
+        let jsonText = response;
+        const codeBlockMatch = response.match(/```(?:json)?\s*([\s\S]*?)```/);
+        if (codeBlockMatch) {
+          jsonText = codeBlockMatch[1].trim();
+        }
+        
+        // Try to find JSON object
+        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          parsed.source = 'gemini';
-          return { success: true, data: parsed };
+          try {
+            // Clean up common JSON issues
+            let cleanJson = jsonMatch[0]
+              .replace(/,\s*([}\]])/g, '$1')  // Remove trailing commas
+              .replace(/([\w"'])\s*\n\s*([\w"'])/g, '$1, $2')  // Add missing commas between lines
+              .replace(/\r?\n/g, ' ');  // Remove newlines
+            
+            const parsed = JSON.parse(cleanJson);
+            parsed.source = 'gemini';
+            return { success: true, data: parsed };
+          } catch (parseError) {
+            console.error('JSON parse error:', parseError.message);
+            console.error('Attempted to parse:', jsonMatch[0].substring(0, 500));
+            // Continue to fallback
+          }
         }
       }
 
@@ -726,12 +792,13 @@ app.use((error, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
+  const host = process.env.RENDER ? `https://${process.env.RENDER_EXTERNAL_HOSTNAME}` : `http://localhost:${PORT}`;
   console.log(`
 🚀 GraphoraX AI Backend running on port ${PORT}
-🔗 API URL: http://localhost:${PORT}
+🔗 API URL: ${host}
 🧠 Ollama URL: ${OLLAMA_URL}
-📊 Health Check: http://localhost:${PORT}/api/health
+📊 Health Check: ${host}/api/health
 
 Available endpoints:
 - POST /api/analyze - Domain analysis
