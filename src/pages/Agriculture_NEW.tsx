@@ -94,9 +94,6 @@ export default function Agriculture({ onBack }: AgricultureProps) {
       // Check if we have AI response from InputPanel
       if (data.aiResponse && data.aiResponse.success) {
         console.log('✅ Using AI-generated analysis, building real-time graph...');
-        console.log('📋 Full AI Response:', data.aiResponse);
-        console.log('🎵 Audio present:', !!data.aiResponse.analysis?.audio);
-        console.log('🗣️ Voice response:', data.aiResponse.analysis?.voice_response);
         
         // Start real-time graph building from API response
         await startRealtimeBuilding(
@@ -109,23 +106,19 @@ export default function Agriculture({ onBack }: AgricultureProps) {
         // Play TTS audio if available
         if (data.aiResponse.analysis.audio) {
           console.log('🔊 Playing TTS audio for agriculture analysis...');
-          console.log('🎯 Audio data available:', !!data.aiResponse.analysis.audio);
-          console.log('🎯 Voice response text:', data.aiResponse.analysis.voice_response?.substring(0, 100));
-          
           try {
             await localAI.playResponseAudio(
               data.aiResponse,
               () => {
-                console.log('🎙️ Agriculture orb started speaking - isSpeaking set to true');
+                console.log('🎙️ Agriculture orb started speaking');
                 setIsSpeaking(true);
               },
               () => {
-                console.log('🤐 Agriculture orb finished speaking - isSpeaking set to false');
+                console.log('🤐 Agriculture orb finished speaking');
                 setIsSpeaking(false);
                 setAudioLevel(0);
               },
               (level: number) => {
-                console.log('📊 Audio level:', level);
                 setAudioLevel(level);
               }
             );
@@ -134,8 +127,6 @@ export default function Agriculture({ onBack }: AgricultureProps) {
             setIsSpeaking(false);
             setAudioLevel(0);
           }
-        } else {
-          console.warn('⚠️ No audio data in AI response');
         }
       } else {
         console.log('🔄 No AI response, using demo real-time simulation');
@@ -210,70 +201,11 @@ export default function Agriculture({ onBack }: AgricultureProps) {
         {/* Left Panel - AI Input & Controls */}
         <div className="lg:w-1/2 space-y-6">
           {/* Enhanced Agriculture Orb */}
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex justify-center mb-8">
             <EnhancedAgriOrb 
               isActive={isAnalyzing || isSpeaking}
-              isSpeaking={isSpeaking}
               audioLevel={audioLevel}
             />
-            
-            {/* Debug Status Indicators */}
-            <div className="mt-4 flex gap-2 text-xs text-green-300/70 flex-wrap justify-center">
-              <div className={`px-2 py-1 rounded ${isAnalyzing ? 'bg-blue-500/30' : 'bg-gray-500/20'}`}>
-                Analyzing: {isAnalyzing ? '✅' : '❌'}
-              </div>
-              <div className={`px-2 py-1 rounded ${isSpeaking ? 'bg-green-500/30' : 'bg-gray-500/20'}`}>
-                Speaking: {isSpeaking ? '🎙️' : '🔇'}
-              </div>
-              <div className="px-2 py-1 rounded bg-purple-500/20">
-                Audio: {Math.round(audioLevel * 100)}%
-              </div>
-              <button 
-                onClick={() => {
-                  console.log('🧪 Testing orb - Current isSpeaking:', isSpeaking);
-                  const newSpeakingState = !isSpeaking;
-                  setIsSpeaking(newSpeakingState);
-                  setAudioLevel(newSpeakingState ? 0.8 : 0);
-                  console.log('🧪 Set isSpeaking to:', newSpeakingState, 'audioLevel:', newSpeakingState ? 0.8 : 0);
-                }}
-                className="px-2 py-1 rounded bg-yellow-500/30 hover:bg-yellow-500/50 transition-colors"
-              >
-                Test Orb 🧪
-              </button>
-              <button 
-                onClick={async () => {
-                  console.log('🎙️ Testing TTS directly...');
-                  setIsSpeaking(true);
-                  try {
-                    const result = await localAI.generateTTS('Hello, this is a test of the agriculture orb speaking system.');
-                    if (result.success && result.audio) {
-                      console.log('✅ TTS generated successfully');
-                      await localAI.playAudio(
-                        result.audio,
-                        'audio/mpeg',
-                        () => console.log('🎙️ Direct TTS started'),
-                        () => {
-                          console.log('🔇 Direct TTS ended');
-                          setIsSpeaking(false);
-                          setAudioLevel(0);
-                        },
-                        (level) => setAudioLevel(level)
-                      );
-                    } else {
-                      console.error('❌ TTS generation failed:', result);
-                      setIsSpeaking(false);
-                    }
-                  } catch (error) {
-                    console.error('❌ TTS test failed:', error);
-                    setIsSpeaking(false);
-                    setAudioLevel(0);
-                  }
-                }}
-                className="px-2 py-1 rounded bg-blue-500/30 hover:bg-blue-500/50 transition-colors"
-              >
-                Test TTS 🔊
-              </button>
-            </div>
           </div>
 
           {/* Input Panel */}

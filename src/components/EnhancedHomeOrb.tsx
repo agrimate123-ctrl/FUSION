@@ -27,41 +27,22 @@ export default function EnhancedHomeOrb({
 
   return (
     <div className="relative flex items-center justify-center w-96 h-96 mx-auto">
-      {/* Enhanced Quantum Field Effect */}
+      {/* Quantum Field Effect */}
       <motion.div
         animate={{
-          scale: [1, 1.3, 1],
+          scale: [1, 1.2, 1],
           rotate: [0, 360, 720],
-          opacity: [0.2, 0.6, 0.2],
+          opacity: [0.1, 0.4, 0.1],
         }}
         transition={{
-          duration: 15,
+          duration: 12,
           repeat: Infinity,
           ease: "easeInOut"
         }}
         className="absolute inset-0 rounded-full"
         style={{
-          background: 'conic-gradient(from 0deg, rgba(59, 130, 246, 0.6), rgba(147, 51, 234, 0.5), rgba(6, 182, 212, 0.6), rgba(16, 185, 129, 0.5), rgba(236, 72, 153, 0.4), rgba(59, 130, 246, 0.6))',
-          filter: 'blur(30px)',
-        }}
-      />
-
-      {/* Secondary Quantum Layer */}
-      <motion.div
-        animate={{
-          scale: [1.2, 0.8, 1.2],
-          rotate: [360, 0, -360],
-          opacity: [0.1, 0.3, 0.1],
-        }}
-        transition={{
-          duration: 18,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        className="absolute inset-4 rounded-full"
-        style={{
-          background: 'conic-gradient(from 180deg, rgba(236, 72, 153, 0.4), rgba(59, 130, 246, 0.3), rgba(147, 51, 234, 0.4), rgba(6, 182, 212, 0.3), rgba(236, 72, 153, 0.4))',
-          filter: 'blur(20px)',
+          background: 'conic-gradient(from 0deg, rgba(59, 130, 246, 0.4), rgba(147, 51, 234, 0.3), rgba(6, 182, 212, 0.4), rgba(16, 185, 129, 0.3), rgba(59, 130, 246, 0.4))',
+          filter: 'blur(25px)',
         }}
       />
 
@@ -79,84 +60,40 @@ export default function EnhancedHomeOrb({
         className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-300 via-purple-400 to-cyan-300 blur-3xl opacity-60"
       />
 
-      {/* Enhanced Multi-Ring Particle System */}
+      {/* Rotating Particle Ring */}
       <motion.div
         animate={{ rotate: 360 }}
         transition={{
-          duration: 30,
+          duration: 25,
           repeat: Infinity,
           ease: "linear"
         }}
-        className="absolute inset-8"
+        className="absolute inset-12"
       >
-        {[...Array(20)].map((_, i) => (
+        {[...Array(16)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute rounded-full"
-            style={{
-              width: Math.random() * 6 + 3 + 'px',
-              height: Math.random() * 6 + 3 + 'px',
-              top: '50%',
-              left: '50%',
-              background: `radial-gradient(circle, 
-                ${i % 5 === 0 ? 'rgba(59, 130, 246, 1)' : 
-                  i % 5 === 1 ? 'rgba(147, 51, 234, 1)' : 
-                  i % 5 === 2 ? 'rgba(6, 182, 212, 1)' : 
-                  i % 5 === 3 ? 'rgba(16, 185, 129, 1)' :
-                  'rgba(236, 72, 153, 1)'}, 
-                transparent)`,
-              transform: `rotate(${i * 18}deg) translateY(-160px) translateX(-50%)`,
-              transformOrigin: '50% 160px',
-              filter: 'blur(1px)',
-            }}
-            animate={{
-              scale: [0.3, 2, 0.3],
-              opacity: [0.2, 1, 0.2],
-            }}
-            transition={{
-              duration: 4,
-              repeat: Infinity,
-              delay: i * 0.08,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
-      </motion.div>
-
-      {/* Inner Particle Ring */}
-      <motion.div
-        animate={{ rotate: -360 }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "linear"
-        }}
-        className="absolute inset-16"
-      >
-        {[...Array(12)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-3 h-3 rounded-full"
+            className="absolute w-4 h-4 rounded-full"
             style={{
               top: '50%',
               left: '50%',
-              background: `linear-gradient(45deg, 
-                ${i % 3 === 0 ? 'rgba(255, 255, 255, 0.9)' : 
-                  i % 3 === 1 ? 'rgba(59, 130, 246, 0.9)' : 
-                  'rgba(6, 182, 212, 0.9)'}, 
+              background: `linear-gradient(135deg, 
+                ${i % 4 === 0 ? 'rgba(59, 130, 246, 0.8)' : 
+                  i % 4 === 1 ? 'rgba(147, 51, 234, 0.8)' : 
+                  i % 4 === 2 ? 'rgba(6, 182, 212, 0.8)' : 
+                  'rgba(16, 185, 129, 0.8)'}, 
                 transparent)`,
-              transform: `rotate(${i * 30}deg) translateY(-80px) translateX(-50%)`,
-              transformOrigin: '50% 80px',
-              boxShadow: '0 0 15px rgba(255, 255, 255, 0.5)',
+              transform: `rotate(${i * 22.5}deg) translateY(-140px) translateX(-50%)`,
+              transformOrigin: '50% 140px',
             }}
             animate={{
-              scale: [0.8, 1.5, 0.8],
-              opacity: [0.4, 1, 0.4],
+              scale: [0.6, 1.4, 0.6],
+              opacity: [0.3, 1, 0.3],
             }}
             transition={{
-              duration: 2.5,
+              duration: 3,
               repeat: Infinity,
-              delay: i * 0.12,
+              delay: i * 0.1,
               ease: "easeInOut"
             }}
           />
@@ -340,55 +277,24 @@ export default function EnhancedHomeOrb({
             />
           </motion.div>
 
-          {/* Enhanced Energy Waves when Active */}
+          {/* Pulsing Energy Waves when Active */}
           {isActive && (
             <>
-              {[...Array(8)].map((_, i) => (
+              {[...Array(5)].map((_, i) => (
                 <motion.div
                   key={i}
-                  initial={{ scale: 0.3, opacity: 0 }}
+                  initial={{ scale: 0.4, opacity: 0 }}
                   animate={{
-                    scale: [0.3, 4, 5],
-                    opacity: [1, 0.6, 0],
+                    scale: [0.4, 3, 3.5],
+                    opacity: [0.9, 0.4, 0],
                   }}
                   transition={{
-                    duration: 5,
+                    duration: 4,
                     repeat: Infinity,
-                    delay: i * 0.7,
+                    delay: i * 1,
                     ease: "easeOut"
                   }}
-                  className="absolute inset-0 rounded-full border-2"
-                  style={{
-                    borderColor: i % 4 === 0 ? 'rgba(59, 130, 246, 0.8)' :
-                                i % 4 === 1 ? 'rgba(147, 51, 234, 0.8)' :
-                                i % 4 === 2 ? 'rgba(6, 182, 212, 0.8)' :
-                                'rgba(16, 185, 129, 0.8)',
-                    filter: 'blur(2px)',
-                  }}
-                />
-              ))}
-              
-              {/* Quantum Interference Patterns */}
-              {[...Array(6)].map((_, i) => (
-                <motion.div
-                  key={`interference-${i}`}
-                  initial={{ scale: 0.5, opacity: 0, rotate: 0 }}
-                  animate={{
-                    scale: [0.5, 2.5, 3],
-                    opacity: [0.8, 0.3, 0],
-                    rotate: [0, 180, 360],
-                  }}
-                  transition={{
-                    duration: 6,
-                    repeat: Infinity,
-                    delay: i * 1.2,
-                    ease: "easeInOut"
-                  }}
-                  className="absolute inset-0 rounded-full border border-dashed"
-                  style={{
-                    borderColor: 'rgba(255, 255, 255, 0.3)',
-                    filter: 'blur(1px)',
-                  }}
+                  className="absolute inset-0 rounded-full border-3 border-blue-300/80"
                 />
               ))}
             </>
@@ -428,77 +334,29 @@ export default function EnhancedHomeOrb({
         </motion.p>
       </div>
 
-      {/* Enhanced Data Stream Effects */}
+      {/* Data Stream Effects */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(16)].map((_, i) => (
+        {[...Array(8)].map((_, i) => (
           <motion.div
             key={i}
-            className="absolute bg-gradient-to-b opacity-60"
+            className="absolute w-px h-12 bg-gradient-to-b from-blue-400 via-purple-500 to-transparent"
             style={{
-              width: Math.random() * 2 + 1 + 'px',
-              height: Math.random() * 20 + 15 + 'px',
-              background: `linear-gradient(to bottom, 
-                ${i % 4 === 0 ? 'rgba(59, 130, 246, 0.8)' :
-                  i % 4 === 1 ? 'rgba(147, 51, 234, 0.8)' :
-                  i % 4 === 2 ? 'rgba(6, 182, 212, 0.8)' :
-                  'rgba(16, 185, 129, 0.8)'}, 
-                transparent)`,
-              top: '10%',
-              left: `${5 + i * 5.5}%`,
-              filter: 'blur(0.5px)',
+              top: '5%',
+              left: `${15 + i * 10}%`,
             }}
             animate={{
-              y: [0, 400],
+              y: [0, 350],
               opacity: [0, 1, 0],
-              scaleY: [1, 1.5, 1],
             }}
             transition={{
-              duration: Math.random() * 2 + 2,
+              duration: 3,
               repeat: Infinity,
-              delay: i * 0.2,
+              delay: i * 0.4,
               ease: "easeInOut"
             }}
           />
         ))}
       </div>
-
-      {/* Quantum Entanglement Lines */}
-      <motion.div className="absolute inset-0 pointer-events-none">
-        {[...Array(6)].map((_, i) => (
-          <motion.svg
-            key={i}
-            className="absolute inset-0 w-full h-full"
-            animate={{
-              rotate: [0, 360],
-              opacity: [0.2, 0.6, 0.2],
-            }}
-            transition={{
-              rotate: { duration: 25 + i * 3, repeat: Infinity, ease: "linear" },
-              opacity: { duration: 4, repeat: Infinity, ease: "easeInOut" }
-            }}
-          >
-            <motion.line
-              x1="50%"
-              y1="50%"
-              x2={`${50 + Math.cos(i * 60 * Math.PI / 180) * 40}%`}
-              y2={`${50 + Math.sin(i * 60 * Math.PI / 180) * 40}%`}
-              stroke={i % 3 === 0 ? 'rgba(59, 130, 246, 0.5)' :
-                     i % 3 === 1 ? 'rgba(147, 51, 234, 0.5)' :
-                     'rgba(6, 182, 212, 0.5)'}
-              strokeWidth="1"
-              strokeDasharray="5,5"
-              animate={{
-                strokeDashoffset: [0, -20],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-          </motion.svg>
-        ))}
-      </motion.div>
 
       {/* System Status Indicators */}
       <div className="absolute top-8 left-8">

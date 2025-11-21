@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import * as d3 from 'd3';
 
 interface Node {
@@ -7,12 +7,19 @@ interface Node {
   label: string;
   group: number;
   active?: boolean;
+  timestamp?: number;
+  confidence?: number;
+  isNew?: boolean;
 }
 
 interface Link {
   source: string;
   target: string;
   value: number;
+  strength?: number;
+  type?: 'positive' | 'negative';
+  timestamp?: number;
+  isNew?: boolean;
 }
 
 interface GraphViewProps {
@@ -21,6 +28,10 @@ interface GraphViewProps {
   isProgressive?: boolean;
   currentStep?: number;
   analysisSteps?: string[];
+  isRealTime?: boolean;
+  isBuilding?: boolean;
+  buildingMessage?: string;
+  onNodeClick?: (node: Node) => void;
 }
 
 export default function GraphView({ 
@@ -28,9 +39,14 @@ export default function GraphView({
   links, 
   isProgressive = false, 
   currentStep = 0, 
-  analysisSteps = [] 
+  analysisSteps = [],
+  isRealTime = false,
+  isBuilding = false,
+  buildingMessage = '',
+  onNodeClick
 }: GraphViewProps) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const simulationRef = useRef<d3.Simulation<any, undefined> | null>(null);
 
   useEffect(() => {
     if (!svgRef.current || nodes.length === 0) return;
@@ -45,41 +61,116 @@ export default function GraphView({
       : links;
 
     const svg = d3.select(svgRef.current);
-    svg.selectAll('*').remove();
+    
+    // Only clear if this is not a real-time update
+    if (!isRealTime) {
+      svg.selectAll('*').remove();
+    }
 
     const width = svgRef.current.clientWidth;
     const height = svgRef.current.clientHeight;
 
-    const simulation = d3.forceSimulation(visibleNodes as any)
-      .force('link', d3.forceLink(visibleLinks).id((d: any) => d.id).distance(150))
-      .force('charge', d3.forceManyBody().strength(-400))
-      .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide().radius(50));
+    // Create or update simulation
+    let simulation = simulationRef.current;
+    if (!simulation || !isRealTime) {
+      // Stop existing simulation
+      if (simulationRef.current) {
+        simulationRef.current.stop();
+      }
+      
+      simulation = d3.forceSimulation(visibleNodes as any)
+        .force('link', d3.forceLink(visibleLinks).id((d: any) => d.id).distance(150))
+        .force('charge', d3.forceManyBody().strength(-400))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide().radius(50));
+      
+      simulationRef.current = simulation;
+    } else {
+      // Update existing simulation with new data
+      simulation.nodes(visibleNodes as any);
+      const linkForce = simulation.force('link') as d3.ForceLink<any, any>;
+      if (linkForce) {
+        linkForce.links(visibleLinks);
+      }
+      simulation.alpha(0.3).restart();
+    }
 
-    const g = svg.append('g');
+    // Get or create main group
+    let g = svg.select('g.main-group');
+    if (g.empty()) {
+      g = svg.append('g').attr('class', 'main-group');
+      
+      const zoom = d3.zoom()
+        .scaleExtent([0.5, 3])
+        .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+          g.attr('transform', event.transform.toString());
+        });
 
-    const zoom = d3.zoom()
-      .scaleExtent([0.5, 3])
-      .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-        g.attr('transform', event.transform.toString());
-      });
+      svg.call(zoom as any);
+    }
 
-    svg.call(zoom as any);
+    // Create or get defs
+    let defs = svg.select('defs');
+    if (defs.empty()) {
+      defs = svg.append('defs');
+      
+      const gradient = defs.append('linearGradient')
+        .attr('id', 'link-gradient')
+        .attr('gradientUnits', 'userSpaceOnUse');
 
-    const defs = svg.append('defs');
-    const gradient = defs.append('linearGradient')
-      .attr('id', 'link-gradient')
-      .attr('gradientUnits', 'userSpaceOnUse');
+      gradient.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', '#3b82f6')
+        .attr('stop-opacity', 0.8);
 
-    gradient.append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', '#3b82f6')
-      .attr('stop-opacity', 0.8);
+      gradient.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', '#8b5cf6')
+        .attr('stop-opacity', 0.8);
 
-    gradient.append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', '#8b5cf6')
-      .attr('stop-opacity', 0.8);
+      // Add glow filter for new nodes
+      const glowFilter = defs.append('filter')
+        .attr('id', 'glow')
+        .attr('x', '-50%')
+        .attr('y', '-50%')
+        .attr('width', '200%')
+        .attr('height', '200%');
+
+      glowFilter.append('feGaussianBlur')
+        .attr('stdDeviation', '4')
+        .attr('result', 'coloredBlur');
+
+      const feMerge = glowFilter.append('feMerge');
+      feMerge.append('feMergeNode').attr('in', 'coloredBlur');
+      feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+      // Add pulse filter for real-time nodes
+      const pulseFilter = defs.append('filter')
+        .attr('id', 'pulse')
+        .attr('x', '-100%')
+        .attr('y', '-100%')
+        .attr('width', '300%')
+        .attr('height', '300%');
+
+      pulseFilter.append('feGaussianBlur')
+        .attr('stdDeviation', '6')
+        .attr('result', 'coloredBlur');
+
+      pulseFilter.append('feFlood')
+        .attr('flood-color', '#00ff88')
+        .attr('flood-opacity', '0.6')
+        .attr('result', 'glowColor');
+
+      pulseFilter.append('feComposite')
+        .attr('in', 'glowColor')
+        .attr('in2', 'coloredBlur')
+        .attr('operator', 'in')
+        .attr('result', 'softGlow');
+
+      const feMergePulse = pulseFilter.append('feMerge');
+      feMergePulse.append('feMergeNode').attr('in', 'softGlow');
+      feMergePulse.append('feMergeNode').attr('in', 'SourceGraphic');
+    }
 
     const link = g.append('g')
       .selectAll('line')
